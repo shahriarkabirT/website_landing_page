@@ -1,8 +1,8 @@
 import { transporter } from "../config/mailConfig.js"
 
-export const sendMail = async ({ name, businessName, phone, message }) => {
-  if (!name || !businessName || !phone || !message) {
-    throw new Error("Missing required fields: name, businessName, phone, message")
+export const sendMail = async ({ name, businessName, phone, subscriptionType, message }) => {
+  if (!name || !businessName || !phone || !subscriptionType) {
+    throw new Error("Missing required fields: name, businessName, phone, subscriptionType")
   }
 
   const mailOptions = {
@@ -28,8 +28,12 @@ export const sendMail = async ({ name, businessName, phone, message }) => {
             <td><a href="tel:${phone}">${phone}</a></td>
           </tr>
           <tr>
+            <td style="font-weight: bold;">Subscription:</td>
+            <td style="color: #2563eb; font-weight: bold; text-transform: uppercase;">${subscriptionType}</td>
+          </tr>
+          <tr>
             <td style="font-weight: bold; vertical-align: top;">Message:</td>
-            <td>${message.replace(/\n/g, "<br>")}</td>
+            <td>${message ? message.replace(/\n/g, "<br>") : "No additional requirements"}</td>
           </tr>
         </table>
         <p style="color: #666; font-size: 12px; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">

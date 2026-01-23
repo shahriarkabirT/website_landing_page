@@ -1,109 +1,92 @@
+import { ShieldCheck, Headphones, Users } from "lucide-react"
+
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      {/* Darker Background */}
+    <section className="relative overflow-hidden bg-white dark:bg-slate-950">
+      {/* Background with subtle gradient */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        {/* Subtle grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f12_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f12_1px,transparent_1px)] bg-[size:14px_24px]" />
-
-        {/* Enhanced Blur Orbs */}
-        <div className="absolute top-20 left-20 w-96 h-96 bg-purple-600/30 rounded-full blur-[120px] animate-pulse" />
-        <div
-          className="absolute bottom-20 right-20 w-96 h-96 bg-pink-600/30 rounded-full blur-[120px] animate-pulse"
-          style={{ animationDelay: "1s" }}
-        />
-        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 bg-blue-600/20 rounded-full blur-[150px]" />
-
-        {/* You can add a background image here */}
-        {/* <img src="/banner.jpg" alt="Banner" className="w-full h-full object-cover opacity-20" /> */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(120,119,198,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.05),transparent_50%)]" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 sm:py-40">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left Side - Text Content */}
-          <div className="space-y-8 text-left">
-            {/* Brand */}
-            <div className="inline-block">
-              <span className="text-sm font-semibold tracking-widest text-purple-400 uppercase">
-                Collaborative Cloud
-              </span>
-            </div>
-
-            {/* Main Heading */}
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-6xl font-bold text-white leading-[1.1] tracking-tight">
-                শুধুমাত্র ৫,০০০ টাকায়
-              </h1>
-              <h2 className="text-4xl sm:text-6xl font-bold leading-[1.1] tracking-tight">
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 bg-clip-text text-transparent">
-                  নিজের ই-কমার্স স্টোর!
-                </span>
-                <span className="ml-3 inline-block animate-pulse">🚀</span>
-              </h2>
-            </div>
-
-            {/* Pricing Info */}
-            <div className="space-y-3 py-4">
-              <p className="text-lg sm:text-xl text-gray-300 font-medium">
-                ✅ পূর্ণ ১ বছরের হোস্টিং ফ্রি
-              </p>
-              <p className="text-lg sm:text-xl text-gray-300 font-medium">
-                ✅ ডোমেইন সহ সম্পূর্ণ সেটআপ
-              </p>
-              <div className="flex items-baseline gap-3">
-                <p className="text-3xl sm:text-4xl font-bold text-white">
-                  মাত্র ৫,০০০ টাকা
-                </p>
-                <span className="text-2xl">🔥</span>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <div className="pt-6">
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-base font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/50"
-              >
-                <span>শুরু করুন এখনই</span>
-                <span>→</span>
-              </a>
-            </div>
-
-            {/* Deadline */}
-            <div className="flex items-center gap-2 pt-2">
-              <div className="h-px w-12 bg-gradient-to-r from-transparent to-purple-500" />
-              <p className="text-sm text-gray-400 font-medium">
-                অফার চলবে ১০শে জানুয়ারি ২০২৬ পর্যন্ত
-              </p>
-            </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 sm:py-32">
+        <div className="text-center space-y-8">
+          {/* Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800 animate-fade-in">
+            <ShieldCheck className="w-4 h-4" />
+            <span className="text-sm font-semibold tracking-wide uppercase">
+              Trusted Ecommerce Partner
+            </span>
           </div>
 
-          {/* Right Side - Large Discount Badge */}
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative">
-              {/* Enhanced Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/50 to-pink-500/50 blur-[120px] animate-pulse" />
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 blur-[100px]" />
+          {/* Main Heading */}
+          <h1 className="text-5xl sm:text-7xl font-extrabold text-slate-900 dark:text-white leading-[1.15] tracking-tight max-w-4xl mx-auto">
+            মাত্র কয়েক মিনিটে আপনার <br />
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent italic">
+              ই-কমার্স সাইট
+            </span>{" "}
+            বুঝে নিন
+          </h1>
 
-              <div className="relative text-center">
-                <div className="text-[9rem] font-black bg-gradient-to-b from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent leading-none drop-shadow-2xl">
-                  70%
-                </div>
-                <div className="text-5xl font-bold text-white/90 tracking-[0.3em] -mt-4">
-                  OFF
-                </div>
+          {/* Subtext */}
+          <div className="space-y-2">
+            <p className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200">
+              শুরু মাত্র ১০০০ টাকা থেকে!
+            </p>
+            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              কোন হোস্টং চার্জ নেই, ফ্রি কন্সাল্টেশন! আপনি আপনার ব্যবসা দেখবেন আমরা দেখবো আপনার ই-কমার্স
+            </p>
+          </div>
 
-                {/* Enhanced Decorative elements */}
-                <div className="absolute -top-12 -right-12 w-32 h-32 bg-yellow-400/30 rounded-full blur-2xl animate-pulse" />
-                <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-purple-500/40 rounded-full blur-2xl" />
-                <div className="absolute top-1/2 right-0 w-24 h-24 bg-pink-400/25 rounded-full blur-xl" />
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+            <a
+              href="#contact"
+              className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-blue-600 text-white text-lg font-bold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-xl shadow-blue-500/25"
+            >
+              অর্ডার করুন
+            </a>
+            <a
+              href="/features"
+              className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-lg font-bold border-2 border-slate-200 dark:border-slate-800 hover:border-blue-500 transition-all duration-300"
+            >
+              ফিচার গুলো দেখুন
+            </a>
+          </div>
+
+          {/* Social Proof / Trust Indicators */}
+          <div className="pt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto border-t border-slate-100 dark:border-slate-800 mt-16">
+            <div className="flex items-center justify-center gap-3 group">
+              <div className="p-3 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 group-hover:scale-110 transition-transform">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-bold text-slate-900 dark:text-white">99.9%</p>
+                <p className="text-sm text-slate-500">Uptime Guarantee</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-3 group">
+              <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 group-hover:scale-110 transition-transform">
+                <Headphones className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-bold text-slate-900 dark:text-white">24/7</p>
+                <p className="text-sm text-slate-500">Support Available</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-3 group">
+              <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 group-hover:scale-110 transition-transform">
+                <Users className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-bold text-slate-900 dark:text-white">১৫০০+</p>
+                <p className="text-sm text-slate-500">Happy Clients</p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
+  )
 }

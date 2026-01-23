@@ -1,20 +1,22 @@
 import ContactForm from "./components/contact-form";
 import Hero from "./components/hero";
 import Templates from "./components/templates";
+import Pricing from "./components/pricing";
+import Navbar from "./components/navbar";
+import ConsultationForm from "./components/consultation-form";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
+      <Navbar />
       <Hero />
 
       <Templates />
+      <Pricing />
+      <ConsultationForm />
 
-      {/* Contact Section */}
-      <section
-        id="contact"
-        className="py-16 border-t border-border/50 bg-secondary/20"
-      >
-        <div className="mx-auto max-w-2xl px-6">
+      <section id="contact" className="py-24 bg-white dark:bg-slate-950">
+        <div className="mx-auto max-w-4xl px-6">
           <ContactForm />
         </div>
       </section>
