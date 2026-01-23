@@ -1,47 +1,46 @@
 "use client"
 
 import { useEffect, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
 function AuthSuccessContent() {
     const router = useRouter()
-    const searchParams = useSearchParams()
     const { login } = useAuth()
 
     useEffect(() => {
-        const token = searchParams.get("token")
-        if (token) {
-            const fetchProfile = async () => {
-                try {
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/profile`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    })
-                    if (res.ok) {
-                        const userData = await res.json()
-                        login({ ...userData, token })
-                        toast.success("Google login successful")
-                        if (userData.role === "admin") {
-                            router.push("/admin/dashboard")
-                        } else {
-                            router.push("/")
-                        }
+        // Since we are using cookies now, we just need to fetch profile to confirm and get user data
+        const fetchProfile = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/profile`, {
+                    credentials: "include"
+                })
+
+                if (res.ok) {
+                    const userData = await res.json()
+                    login(userData)
+                    toast.success("Google login successful")
+                    if (userData.role === "admin") {
+                        router.push("/admin/dashboard")
                     } else {
-                        toast.error("Failed to fetch profile")
-                        router.push("/login")
+                        router.push("/dashboard")
                     }
-                } catch (error) {
-                    toast.error("Auth error")
+                } else {
+                    toast.error("Failed to authenticate")
                     router.push("/login")
                 }
+            } catch (error) {
+                toast.error("Auth error")
+                router.push("/login")
             }
-            fetchProfile()
-        } else {
-            router.push("/login")
         }
-    }, [searchParams, login, router])
+
+        // Small delay to ensure cookie is set/ready if client side is fast
+        setTimeout(fetchProfile, 1500)
+
+    }, [login, router])
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">

@@ -12,7 +12,7 @@ export default function Pricing() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/plans`)
         const data = await res.json()
-        setPlans(data)
+        setPlans(Array.isArray(data) ? data : [])
       } catch (error) {
         console.error("Failed to fetch plans", error)
       } finally {
@@ -89,7 +89,7 @@ export default function Pricing() {
               </a>
 
               <div className="space-y-4 mt-auto">
-                {plan.features.map((feature: string, j: number) => (
+                {(plan.features || []).map((feature: string, j: number) => (
                   <div key={j} className="flex items-center gap-3">
                     <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                       <Check className="w-3.5 h-3.5 text-green-600" />

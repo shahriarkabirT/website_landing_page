@@ -24,12 +24,9 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem("token")
-            const headers = { Authorization: `Bearer ${token}` }
-
             const [orderRes, consultRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/orders`, { headers }),
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/consultation`, { headers })
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/orders`, { credentials: "include" }),
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/consultation`, { credentials: "include" })
             ])
 
             if (orderRes.ok) setOrders(await orderRes.json())
@@ -58,7 +55,6 @@ export default function DashboardPage() {
 
     const handleUpdateStatus = async (id: string, newStatus: string, type: "orders" | "consultations") => {
         try {
-            const token = localStorage.getItem("token")
             const url = type === "orders"
                 ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/orders/${id}/status`
                 : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/consultation/${id}/status`
@@ -67,8 +63,8 @@ export default function DashboardPage() {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
                 },
+                credentials: "include",
                 body: JSON.stringify({ status: newStatus })
             })
 

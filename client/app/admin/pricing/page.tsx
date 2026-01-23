@@ -45,7 +45,6 @@ export default function PricingAdminPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const token = localStorage.getItem("token")
         const payload = {
             ...formData,
             features: formData.features.split(",").map(f => f.trim()).filter(f => f !== ""),
@@ -62,8 +61,8 @@ export default function PricingAdminPage() {
                 method,
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
                 },
+                credentials: "include",
                 body: JSON.stringify(payload),
             })
 
@@ -82,12 +81,11 @@ export default function PricingAdminPage() {
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure?")) return
-        const token = localStorage.getItem("token")
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/plans/${id}`, {
                 method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
+                credentials: "include",
             })
 
             if (res.ok) {

@@ -45,3 +45,20 @@ export const sendMail = async ({ name, businessName, phone, subscriptionType, me
 
   return transporter.sendMail(mailOptions)
 }
+
+export const sendMagicLinkEmail = async (email, link) => {
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: "Your Login Link",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2563eb;">Login to Your Account</h2>
+        <p>Click the button below to sign in instantly. This link will expire in 15 minutes.</p>
+        <a href="${link}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Sign In Now</a>
+        <p style="color: #666; font-size: 12px;">If you didn't request this, you can safely ignore this email.</p>
+      </div>
+    `,
+  }
+  return transporter.sendMail(mailOptions)
+}

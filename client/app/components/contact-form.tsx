@@ -70,15 +70,14 @@ export default function ContactForm() {
     setError("")
 
     try {
-      const token = localStorage.getItem("token")
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mail`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
           },
+          credentials: "include",
           body: JSON.stringify(form),
         }
       )

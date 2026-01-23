@@ -1,7 +1,9 @@
+import "dotenv/config"
 import express from "express"
 import cors from "cors"
-import dotenv from "dotenv"
 import session from "express-session"
+import cookieParser from "cookie-parser"
+import MongoStore from "connect-mongo"
 import passport from "./config/passport.js"
 import connectDB from "./config/db.js"
 import mailRoutes from "./routes/mailRoutes.js"
@@ -9,9 +11,7 @@ import adminRoutes from "./routes/adminRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import consultationRoutes from "./routes/consultationRoutes.js"
-import { User } from "./models/index.js"
-
-dotenv.config()
+import { User, Plan } from "./models/index.js"
 
 // Connect to Database
 connectDB()
@@ -27,6 +27,7 @@ app.use(
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 // Session & Passport
 app.use(
@@ -34,10 +35,13 @@ app.use(
     secret: process.env.SESSION_SECRET || "somethingsecret",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 // 1 day
+    }
   }),
 )
 app.use(passport.initialize())
-app.use(passport.session())
 
 // Routes
 app.use("/api/mail", mailRoutes)

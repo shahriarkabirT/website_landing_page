@@ -1,14 +1,13 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 interface User {
     _id: string
     name: string
     email: string
     role: string
-    token?: string
 }
 
 interface AuthContextType {
@@ -16,6 +15,7 @@ interface AuthContextType {
     loading: boolean
     login: (userData: User) => void
     logout: () => void
+    checkAuth: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -24,32 +24,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const router = useRouter()
+    const pathname = usePathname()
+
+    const checkAuth = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/profile`, {
+                credentials: "include"
+            })
+
+            if (res.ok) {
+                const userData = await res.json()
+                setUser(userData)
+            } else {
+                setUser(null)
+            }
+        } catch (error) {
+            setUser(null)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user")
-        if (storedUser) {
-            setUser(JSON.parse(storedUser))
-        }
-        setLoading(false)
+        checkAuth()
     }, [])
 
     const login = (userData: User) => {
         setUser(userData)
-        localStorage.setItem("user", JSON.stringify(userData))
-        if (userData.token) {
-            localStorage.setItem("token", userData.token)
-        }
+        // Redirect logic moved to components or separate effect to be more flexible
     }
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            })
+        } catch (error) {
+            console.error("Logout failed", error)
+        }
         setUser(null)
-        localStorage.removeItem("user")
-        localStorage.removeItem("token")
+        // localStorage.removeItem("user") // Cleanup legacy if exists
         router.push("/login")
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     )

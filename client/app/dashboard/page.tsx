@@ -22,9 +22,8 @@ export default function UserDashboard() {
 
             const fetchOrders = async () => {
                 try {
-                    const token = localStorage.getItem("token")
                     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/orders`, {
-                        headers: { Authorization: `Bearer ${token}` },
+                        credentials: "include",
                     })
                     if (res.ok) {
                         const data = await res.json()
@@ -98,8 +97,8 @@ export default function UserDashboard() {
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3">
                                                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${order.status === 'pending' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20' :
-                                                        order.status === 'completed' ? 'bg-green-50 text-green-600 dark:bg-green-900/20' :
-                                                            'bg-red-50 text-red-600 dark:bg-red-900/20'
+                                                    order.status === 'completed' ? 'bg-green-50 text-green-600 dark:bg-green-900/20' :
+                                                        'bg-red-50 text-red-600 dark:bg-red-900/20'
                                                     }`}>
                                                     {order.status}
                                                 </span>
