@@ -50,8 +50,8 @@ export default function Pricing() {
             <div
               key={i}
               className={`rounded-3xl border-2 transition-all p-10 relative flex flex-col ${plan.highlight
-                  ? "border-blue-600 bg-blue-50/30 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10 scale-105 z-10"
-                  : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600"
+                ? "border-blue-600 bg-blue-50/30 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10 scale-105 z-10"
+                : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600"
                 }`}
             >
               {plan.highlight && (
@@ -79,10 +79,10 @@ export default function Pricing() {
               </div>
 
               <a
-                href="#contact"
+                href={`/checkout?planId=${plan._id}&planName=${encodeURIComponent(plan.name)}&planPrice=${encodeURIComponent(plan.price)}&planPeriod=${encodeURIComponent(plan.period)}`}
                 className={`w-full py-4 rounded-xl text-center font-bold transition-all mb-10 ${plan.highlight
-                    ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/25"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
+                  ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/25"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
                   }`}
               >
                 Order Now

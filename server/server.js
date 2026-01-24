@@ -10,6 +10,7 @@ import mailRoutes from "./routes/mailRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import paymentRoutes from "./routes/paymentRoutes.js"
 import consultationRoutes from "./routes/consultationRoutes.js"
 import { User, Plan } from "./models/index.js"
 
@@ -48,6 +49,7 @@ app.use("/api/mail", mailRoutes)
 app.use("/api/admin", adminRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
+app.use("/api/payment", paymentRoutes)
 app.use("/api/consultation", consultationRoutes)
 
 // Seed Admin and Plans

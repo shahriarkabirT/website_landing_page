@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, Suspense } from "react"
+import { useEffect, useState, Suspense, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { toast } from "sonner"
@@ -11,12 +11,16 @@ function VerifyMagicLinkContent() {
     const searchParams = useSearchParams()
     const { login } = useAuth()
     const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying")
+    const verifiedRef = useRef(false)
 
     useEffect(() => {
         const token = searchParams.get("token")
         const email = searchParams.get("email")
 
         if (token && email) {
+            if (verifiedRef.current) return
+            verifiedRef.current = true
+
             const verify = async () => {
                 try {
                     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify-magic-link`, {

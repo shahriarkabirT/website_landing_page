@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import type React from "react";
 import MetaPixel from "./components/meta-pixel";
 import "./globals.css";
@@ -9,6 +10,11 @@ import { Toaster } from "@/components/ui/sonner";
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
+
+const bengaliFont = localFont({
+  src: "../fonts/Li Shohid Tahmid Tamin Unicode.ttf",
+  variable: "--font-bengali",
+});
 
 export const metadata: Metadata = {
   title: "Professional Website Development for Your Business | BD Web Services",
@@ -49,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`font-sans antialiased ${bengaliFont.variable}`}>
         <AuthProvider>
           {children}
           <Toaster />

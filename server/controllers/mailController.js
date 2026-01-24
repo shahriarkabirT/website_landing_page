@@ -31,24 +31,45 @@ export const handleMail = async (req, res) => {
 
     let currentUser = req.user
     let token = null
+    let isNewUser = false
 
-    // If not logged in and email/password provided, create account
-    if (!currentUser && email && password) {
+    // If not logged in and email provided, check/create account
+    if (!currentUser && email) {
       const userExists = await User.findOne({ email })
-      if (userExists) {
-        return res.status(400).json({
-          success: false,
-          error: "A user with this email already exists. Please log in first.",
-        })
-      }
 
-      currentUser = await User.create({
-        name,
-        email,
-        password,
-        role: "user"
-      })
-      token = generateToken(currentUser._id)
+      if (userExists) {
+        currentUser = userExists
+        // We do NOT log them in automatically if they didn't provide credentials
+        // just attach the order to their account
+      } else {
+        // Create new user
+        const crypto = await import("crypto")
+        const generatedPassword = crypto.randomBytes(16).toString("hex")
+
+        currentUser = await User.create({
+          name,
+          email,
+          password: generatedPassword,
+          role: "user"
+        })
+        isNewUser = true
+
+        // Generate Magic Link
+        const magicToken = crypto.randomBytes(32).toString("hex")
+        const hashedToken = crypto.createHash("sha256").update(magicToken).digest("hex")
+
+        currentUser.magicLinkToken = hashedToken
+        currentUser.magicLinkExpires = Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+        await currentUser.save()
+
+        // Send Magic Link Email
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000"
+        const verificationUrl = `${frontendUrl}/verify-magic-link?token=${magicToken}&email=${email}`
+
+        // Dynamically import to avoid circular dependency issues or just use the imported one
+        const { sendMagicLinkEmail } = await import("../services/mailService.js")
+        await sendMagicLinkEmail(email, verificationUrl)
+      }
     }
 
     // Save Order
@@ -65,14 +86,10 @@ export const handleMail = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Order placed successfully!",
-      user: currentUser ? {
-        _id: currentUser._id,
-        name: currentUser.name,
-        email: currentUser.email,
-        role: currentUser.role,
-        token: token || undefined
-      } : null
+      message: isNewUser
+        ? "Order placed! Check your email for login link."
+        : "Order placed successfully!",
+      user: null // Don't return user/token to frontend for security unless they actually logged in
     })
   } catch (error) {
     console.error("Mail error:", error)

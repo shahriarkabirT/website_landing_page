@@ -140,6 +140,8 @@ export const sendMagicLink = async (req, res) => {
         const token = crypto.randomBytes(32).toString("hex")
         const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
 
+
+
         // Save to DB
         user.magicLinkToken = hashedToken
         user.magicLinkExpires = Date.now() + 15 * 60 * 1000 // 15 minutes
@@ -168,13 +170,20 @@ export const verifyMagicLink = async (req, res) => {
 
         const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
 
+
+
+
+
         const user = await User.findOne({
             email,
             magicLinkToken: hashedToken,
             magicLinkExpires: { $gt: Date.now() },
         })
 
+
+
         if (!user) {
+
             return res.status(400).json({ message: "Invalid or expired token" })
         }
 

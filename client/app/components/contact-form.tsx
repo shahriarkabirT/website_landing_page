@@ -31,7 +31,6 @@ export default function ContactForm() {
     subscriptionType: "",
     message: "",
     email: "",
-    password: "",
   })
   const [status, setStatus] = useState<FormStatus>("idle")
   const [error, setError] = useState("")
@@ -157,38 +156,17 @@ export default function ContactForm() {
         </div>
 
         {!user && (
-          <div className="p-6 rounded-[2rem] bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 space-y-6">
-            <div className="flex items-center gap-2 text-blue-600 mb-2">
-              <UserPlus className="w-5 h-5" />
-              <span className="text-sm font-black uppercase tracking-wider">Create Account & Join us</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Email Address</label>
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  onChange={handleChange}
-                  required={!user}
-                  className="h-14 rounded-2xl bg-white dark:bg-slate-900 border-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Set Password</label>
-                <Input
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={handleChange}
-                  required={!user}
-                  className="h-14 rounded-2xl bg-white dark:bg-slate-900 border-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                />
-              </div>
-            </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Email Address</label>
+            <Input
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              required={!user}
+              className="h-14 rounded-2xl bg-white dark:bg-slate-900 border-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            />
           </div>
         )}
 

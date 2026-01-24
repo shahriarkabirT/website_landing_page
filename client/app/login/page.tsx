@@ -48,7 +48,11 @@ export default function LoginPage() {
                     }
                 }
             } else {
-                toast.error(data.message || "Authentication failed")
+                if (res.status === 404) {
+                    toast.error("User not found. Please register first.")
+                } else {
+                    toast.error(data.message || "Authentication failed")
+                }
             }
         } catch (error) {
             toast.error("An error occurred. Please try again.")
@@ -94,7 +98,7 @@ export default function LoginPage() {
                     <Button
                         onClick={handleGoogleLogin}
                         variant="outline"
-                        className="w-full h-14 rounded-2xl flex items-center justify-center gap-3 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border-slate-200 dark:border-slate-700 text-base"
+                        className="w-full h-14 rounded-2xl flex items-center justify-center gap-3 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border-slate-200 dark:border-slate-700 text-base text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                     >
                         <Chrome className="w-5 h-5 text-red-500" />
                         Continue with Google
