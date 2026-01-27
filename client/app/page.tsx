@@ -21,13 +21,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 bg-background py-8">
-        <div className="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 Professional Web Development</p>
-          <p className="mt-2">আপনার ব্যবসার জন্য সেরা ওয়েবসাইট সমাধান</p>
-        </div>
-      </footer>
+
     </main>
   );
 }

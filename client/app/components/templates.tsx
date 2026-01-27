@@ -15,6 +15,7 @@ import {
   Gem,
   ArrowRight
 } from "lucide-react"
+import { ParallaxWrapper } from "@/components/ParallaxWrapper"
 
 const categories = [
   { name: "Consumer Electronics", icon: Laptop, text: "Largest online revenue category (phones, laptops, gadgets) 🌐" },
@@ -30,8 +31,20 @@ const categories = [
 ]
 
 export default function Templates() {
+  const bgElement = (
+    <div className="w-full h-full relative opacity-30 dark:opacity-20 pointer-events-none">
+      <div className="absolute top-20 left-10 w-64 h-64 bg-purple-200 dark:bg-purple-900/40 rounded-full mix-blend-multiply filter blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-72 h-72 bg-blue-200 dark:bg-blue-900/40 rounded-full mix-blend-multiply filter blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-100 dark:bg-indigo-900/30 rounded-full mix-blend-multiply filter blur-3xl" />
+    </div>
+  )
+
   return (
-    <section className="py-24 bg-slate-50 dark:bg-slate-900 overflow-hidden">
+    <ParallaxWrapper
+      className="py-24 bg-slate-50 dark:bg-slate-900"
+      bgElement={bgElement}
+      depth={100}
+    >
       <div className="mx-auto max-w-7xl px-6">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
@@ -49,7 +62,7 @@ export default function Templates() {
             {[...categories, ...categories].map((category, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-80 p-8 rounded-3xl bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                className="flex-shrink-0 w-80 p-8 rounded-3xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer"
               >
                 <div className="mb-6 p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 w-fit group-hover:scale-110 transition-transform">
                   <category.icon className="w-8 h-8" />
@@ -97,6 +110,6 @@ export default function Templates() {
           width: calc(320px * 20 + 24px * 20);
         }
       `}</style>
-    </section>
+    </ParallaxWrapper>
   )
 }

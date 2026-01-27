@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Check, Loader2 } from "lucide-react"
+import { ParallaxWrapper } from "@/components/ParallaxWrapper"
 
 export default function Pricing() {
   const [plans, setPlans] = useState<any[]>([])
@@ -33,8 +34,20 @@ export default function Pricing() {
 
   if (plans.length === 0) return null
 
+  const bgElement = (
+    <div className="w-full h-full relative opacity-40 dark:opacity-20 pointer-events-none">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-100 dark:bg-green-900/30 rounded-full mix-blend-multiply filter blur-[100px]" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-100 dark:bg-blue-900/30 rounded-full mix-blend-multiply filter blur-[100px]" />
+    </div>
+  )
+
   return (
-    <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800" id="pricing">
+    <ParallaxWrapper
+      className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800"
+      bgElement={bgElement}
+      depth={80}
+      id="pricing"
+    >
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center mb-16 space-y-4">
           <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-2">
@@ -50,8 +63,8 @@ export default function Pricing() {
             <div
               key={i}
               className={`rounded-3xl border-2 transition-all p-10 relative flex flex-col ${plan.highlight
-                ? "border-blue-600 bg-blue-50/30 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10 scale-105 z-10"
-                : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600"
+                ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10 scale-105 z-10 backdrop-blur-sm"
+                : "border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:border-slate-300 dark:hover:border-slate-600 backdrop-blur-sm"
                 }`}
             >
               {plan.highlight && (
@@ -104,6 +117,6 @@ export default function Pricing() {
           ))}
         </div>
       </div>
-    </section>
+    </ParallaxWrapper>
   )
 }

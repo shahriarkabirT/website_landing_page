@@ -1,3 +1,7 @@
+"use client"
+
+import { motion } from "framer-motion"
+
 export default function Features() {
   const features = [
     {
@@ -17,23 +21,56 @@ export default function Features() {
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  }
+
   return (
     <section className="py-20 border-b border-border/50 bg-secondary/20">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Why Choose Us?
           </h2>
           <p className="text-lg text-muted-foreground">
             আমাদের পরিষেবা সম্পর্কে জানুন — Why Work With Our Team?
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid md:grid-cols-3 gap-8"
+        >
           {features.map((feature, i) => (
-            <div
+            <motion.div
               key={i}
-              className="p-8 rounded-xl border border-border/50 bg-background hover:border-border transition-all hover:shadow-md"
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              className="p-8 rounded-xl border border-border/50 bg-background hover:border-border transition-colors hover:shadow-lg"
             >
               <div className="text-5xl mb-4">{feature.icon}</div>
               <h3 className="text-2xl font-bold text-foreground mb-3">
@@ -42,11 +79,17 @@ export default function Features() {
               <p className="text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-12 grid md:grid-cols-4 gap-4 pt-12 border-t border-border/50">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="mt-12 grid md:grid-cols-4 gap-4 pt-12 border-t border-border/50"
+        >
           <div className="text-center">
             <p className="text-2xl font-bold text-foreground">100+</p>
             <p className="text-sm text-muted-foreground">Completed Projects</p>
@@ -65,7 +108,7 @@ export default function Features() {
             <p className="text-2xl font-bold text-foreground">✓</p>
             <p className="text-sm text-muted-foreground">Affordable Packages</p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

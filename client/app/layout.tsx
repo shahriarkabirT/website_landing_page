@@ -1,18 +1,19 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono, Hind_Siliguri } from "next/font/google";
 import type React from "react";
 import MetaPixel from "./components/meta-pixel";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import { Footer } from "@/components/footer";
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
-const bengaliFont = localFont({
-  src: "../fonts/Li Shohid Tahmid Tamin Unicode.ttf",
+const bengaliFont = Hind_Siliguri({
+  subsets: ["bengali"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-bengali",
 });
 
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className={`font-sans antialiased ${bengaliFont.variable}`}>
         <AuthProvider>
           {children}
+          <Footer />
           <Toaster />
         </AuthProvider>
         <Analytics />

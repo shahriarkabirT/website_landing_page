@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Sparkles, Send, Loader2, MapPin, Phone, User, Mail } from "lucide-react"
+import { ParallaxWrapper } from "@/components/ParallaxWrapper"
 
 export default function ConsultationForm() {
     const [loading, setLoading] = useState(false)
@@ -42,8 +43,20 @@ export default function ConsultationForm() {
         }
     }
 
+    const bgElement = (
+        <div className="w-full h-full relative opacity-50 dark:opacity-30 pointer-events-none">
+            <div className="absolute top-1/2 left-0 w-64 h-64 bg-blue-100 dark:bg-blue-900/40 rounded-full mix-blend-multiply filter blur-3xl -translate-y-1/2" />
+            <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-purple-100 dark:bg-purple-900/40 rounded-full mix-blend-multiply filter blur-3xl" />
+        </div>
+    )
+
     return (
-        <section className="py-24 bg-slate-50 dark:bg-slate-950/50" id="consultation">
+        <ParallaxWrapper
+            className="py-24 bg-slate-50 dark:bg-slate-950/50"
+            id="consultation"
+            bgElement={bgElement}
+            depth={60}
+        >
             <div className="mx-auto max-w-7xl px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     {/* Text Content */}
@@ -157,6 +170,6 @@ export default function ConsultationForm() {
                     </div>
                 </div>
             </div>
-        </section>
+        </ParallaxWrapper>
     )
 }
