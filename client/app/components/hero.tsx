@@ -1,37 +1,24 @@
 "use client"
 
-import { useRef } from "react"
 import { ShieldCheck, Headphones, Users } from "lucide-react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion } from "framer-motion"
 
 export default function Hero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  })
-
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
-
   return (
     <section
-      ref={ref}
-      className="relative overflow-hidden bg-white dark:bg-slate-950 min-h-[90vh] flex items-center"
+      className="relative overflow-hidden bg-white dark:bg-slate-950 flex items-center"
     >
       {/* Background with Parallax */}
-      <motion.div
-        style={{ y: backgroundY }}
+      <div
         className="absolute inset-0 z-0"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(120,119,198,0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.05),transparent_50%)]" />
-      </motion.div>
+      </div>
 
       {/* Content */}
-      <motion.div
-        style={{ y: textY }}
-        className="relative z-10 mx-auto max-w-7xl px-6 py-20 sm:py-32 w-full"
+      <div
+        className="relative z-10 mx-auto max-w-7xl px-6 py-10 sm:py-16 w-full"
       >
         <div className="text-center space-y-8">
           {/* Trust Badge */}
@@ -55,7 +42,7 @@ export default function Hero() {
             className="text-5xl sm:text-7xl font-extrabold text-slate-900 dark:text-white leading-[1.15] tracking-tight max-w-4xl mx-auto"
           >
             মাত্র কয়েক মিনিটে আপনার <br />
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent italic">
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
               ই-কমার্স সাইট
             </span>{" "}
             বুঝে নিন
@@ -133,7 +120,7 @@ export default function Hero() {
             </div>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   )
 }

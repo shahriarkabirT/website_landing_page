@@ -3,6 +3,7 @@ import Hero from "./components/hero";
 import Templates from "./components/templates";
 import Pricing from "./components/pricing";
 import Navbar from "./components/navbar";
+import DemoSection from "./components/demo-section";
 import ConsultationForm from "./components/consultation-form";
 
 export default function Home() {
@@ -10,8 +11,9 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
+      <DemoSection />
 
-      <Templates />
+      {/* <Templates /> */}
       <Pricing />
       <ConsultationForm />
 

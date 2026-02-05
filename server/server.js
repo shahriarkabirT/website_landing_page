@@ -12,7 +12,10 @@ import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import paymentRoutes from "./routes/paymentRoutes.js"
 import consultationRoutes from "./routes/consultationRoutes.js"
+import demoRoutes from "./routes/demoRoutes.js"
+import uploadRoutes from "./routes/uploadRoutes.js"
 import { User, Plan } from "./models/index.js"
+import path from "path"
 
 // Connect to Database
 connectDB()
@@ -51,6 +54,11 @@ app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/payment", paymentRoutes)
 app.use("/api/consultation", consultationRoutes)
+app.use("/api/demo", demoRoutes)
+app.use("/api/upload", uploadRoutes)
+
+const __dirname = path.resolve()
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")))
 
 // Seed Admin and Plans
 const seedData = async () => {

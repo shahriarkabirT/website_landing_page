@@ -5,14 +5,23 @@ import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboard, LogOut, User } from "lucide-react"
 
+import Image from "next/image"
+
 export default function Navbar() {
     const { user, logout } = useAuth()
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800">
             <div className="mx-auto max-w-7xl px-6 h-20 flex items-center justify-between">
-                <Link href="/" className="text-2xl font-black text-blue-600 tracking-tighter hover:opacity-80 transition-opacity">
-                    BD WEB
+                <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <Image
+                        src="/logo.png"
+                        alt="idokans.com"
+                        width={100}
+                        height={100}
+                        className="w-24 h-24 object-contain"
+                    />
+
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8">

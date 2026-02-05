@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react"
 import { Check, Loader2 } from "lucide-react"
-import { ParallaxWrapper } from "@/components/ParallaxWrapper"
+
+import OrderModal from "./order-modal"
 
 export default function Pricing() {
   const [plans, setPlans] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedPlanForOrder, setSelectedPlanForOrder] = useState<{ name: string, price: string } | null>(null)
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -41,82 +46,117 @@ export default function Pricing() {
     </div>
   )
 
+
+
+
+  const openOrderModal = (plan: any) => {
+    setSelectedPlanForOrder({ name: plan.name, price: plan.price })
+    setIsModalOpen(true)
+  }
+
+  const processedPlans = plans.map((plan) => ({ ...plan }));
+  const highlightedCount = processedPlans.filter((p) => p.highlight).length;
+
+  if (highlightedCount > 1) {
+    // If multiple plans are highlighted, prioritize "Yearly" or the middle one
+    const yearlyIndex = processedPlans.findIndex((p) => p.name.toLowerCase().includes("yearly"));
+    processedPlans.forEach((p, idx) => {
+      if (yearlyIndex !== -1) {
+        p.highlight = idx === yearlyIndex;
+      } else {
+        // Default to middle element if no "Yearly" found
+        p.highlight = idx === Math.floor(processedPlans.length / 2);
+      }
+    });
+  }
+
   return (
-    <ParallaxWrapper
-      className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800"
-      bgElement={bgElement}
-      depth={80}
-      id="pricing"
-    >
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-2">
-            Pricing and Subscriptions
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Choose the plan that fits your business needs. No hidden charges.
-          </p>
-        </div>
+    <>
+      <section
+        className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 relative overflow-hidden"
+        id="pricing"
+      >
+        {bgElement}
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-2">
+              Pricing and Subscriptions
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Choose the plan that fits your business needs. No hidden charges.
+            </p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan, i) => (
-            <div
-              key={i}
-              className={`rounded-3xl border-2 transition-all p-10 relative flex flex-col ${plan.highlight
-                ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10 scale-105 z-10 backdrop-blur-sm"
-                : "border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:border-slate-300 dark:hover:border-slate-600 backdrop-blur-sm"
-                }`}
-            >
-              {plan.highlight && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <span className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-bold tracking-wide">
-                    BEST VALUE
-                  </span>
-                </div>
-              )}
-
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-                {plan.name}
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-8 text-sm leading-relaxed">
-                {plan.description}
-              </p>
-
-              <div className="mb-8 flex items-baseline gap-1">
-                <span className="text-5xl font-black text-slate-900 dark:text-white">
-                  {plan.price}
-                </span>
-                <span className="text-slate-500 font-medium">
-                  {plan.period}
-                </span>
-              </div>
-
-              <a
-                href={`/checkout?planId=${plan._id}&planName=${encodeURIComponent(plan.name)}&planPrice=${encodeURIComponent(plan.price)}&planPeriod=${encodeURIComponent(plan.period)}`}
-                className={`w-full py-4 rounded-xl text-center font-bold transition-all mb-10 ${plan.highlight
-                  ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/25"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
+          <div className="grid md:grid-cols-3 gap-8">
+            {processedPlans.map((plan, i) => (
+              <div
+                key={i}
+                className={`rounded-3xl border-2 transition-all p-10 relative flex flex-col ${plan.highlight
+                  ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10 scale-105 z-10 backdrop-blur-sm"
+                  : "border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:border-slate-300 dark:hover:border-slate-600 backdrop-blur-sm"
                   }`}
               >
-                Order Now
-              </a>
-
-              <div className="space-y-4 mt-auto">
-                {(plan.features || []).map((feature: string, j: number) => (
-                  <div key={j} className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-green-600" />
-                    </div>
-                    <span className="text-sm text-slate-700 dark:text-slate-300">
-                      {feature}
+                {plan.highlight && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <span className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-bold tracking-wide">
+                      BEST VALUE
                     </span>
                   </div>
-                ))}
+                )}
+
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                  {plan.name}
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-8 text-sm leading-relaxed">
+                  {plan.description}
+                </p>
+
+                <div className="mb-8 flex items-baseline gap-1">
+                  <span className="text-5xl font-black text-slate-900 dark:text-white">
+                    {plan.price}
+                  </span>
+                  <span className="text-slate-500 font-medium">
+                    {plan.period}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => openOrderModal(plan)}
+                  className={`w-full py-4 rounded-xl text-center font-bold transition-all mb-10 ${plan.highlight
+                    ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/25"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
+                    }`}
+                >
+                  Order Now
+                </button>
+
+                <div className="space-y-4 mt-auto">
+                  {(plan.features || []).map((feature: string, j: number) => (
+                    <div key={j} className="flex items-center gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                        <Check className="w-3.5 h-3.5 text-green-600" />
+                      </div>
+                      <span className="text-sm text-slate-700 dark:text-slate-300">
+                        {feature}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </ParallaxWrapper>
+      </section>
+
+      {/* Order Modal */}
+      {selectedPlanForOrder && (
+        <OrderModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          planName={selectedPlanForOrder.name}
+          planPrice={selectedPlanForOrder.price}
+        />
+      )}
+    </>
   )
 }

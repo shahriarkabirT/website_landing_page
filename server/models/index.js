@@ -38,11 +38,14 @@ const planSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    templateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Demo' }, // Selected Template
     name: { type: String, required: true },
-    businessName: { type: String, required: true },
+    businessName: { type: String }, // Made optional in schema, though UI might require
     phone: { type: String, required: true },
+    email: { type: String },
     subscriptionType: { type: String, required: true },
     message: { type: String },
+    transactionId: { type: String },
     status: { type: String, default: 'pending', enum: ['pending', 'completed', 'canceled'] }
 }, { timestamps: true })
 
@@ -54,7 +57,16 @@ const consultationSchema = new mongoose.Schema({
     status: { type: String, default: 'pending', enum: ['pending', 'handled', 'canceled'] }
 }, { timestamps: true })
 
+const demoSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    imageUrl: { type: String, required: true },
+    order: { type: Number, default: 0 },
+    isVisible: { type: Boolean, default: true }
+}, { timestamps: true })
+
 export const User = mongoose.model("User", userSchema)
 export const Plan = mongoose.model("Plan", planSchema)
 export const Order = mongoose.model("Order", orderSchema)
 export const Consultation = mongoose.model("Consultation", consultationSchema)
+export const Demo = mongoose.model("Demo", demoSchema)
