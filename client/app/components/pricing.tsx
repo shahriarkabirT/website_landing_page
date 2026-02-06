@@ -100,7 +100,7 @@ export default function Pricing() {
         id="pricing"
       >
         {bgElement}
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-6xl lg:max-w-6xl 2xl:max-w-7xl px-6">
           <div className="text-center mb-16 space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-2">
               Pricing and Subscriptions
@@ -119,14 +119,14 @@ export default function Pricing() {
               setApi={setApi}
               className="w-full max-w-[95vw] md:max-w-7xl mx-auto"
             >
-              <CarouselContent className="-ml-4 py-8">
+              <CarouselContent className="-ml-1 md:-ml-4 py-8">
                 {processedPlans.map((plan, i) => {
                   const isActive = current === i;
                   return (
-                    <CarouselItem key={i} className="pl-4 basis-[65%] md:basis-1/3 h-auto">
+                    <CarouselItem key={i} className="pl-1 md:pl-4 basis-[75%] md:basis-1/3 h-auto">
                       <div
                         className={cn(
-                          "rounded-[2rem] border-2 transition-all p-5 md:p-10 relative flex flex-col h-full duration-500",
+                          "rounded-[2rem] border-2 transition-all p-5 md:p-6 relative flex flex-col h-full duration-500", // Reduced md:p-10 to md:p-6
                           // Mobile: Highlight center item, shrink others
                           isActive ? "scale-100 opacity-100 z-10" : "scale-90 opacity-60 z-0",
                           // Desktop: Uniform size
@@ -145,35 +145,34 @@ export default function Pricing() {
                           </div>
                         )}
 
-                        <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-2"> {/* Compacted text size and margin */}
                           {plan.name}
                         </h3>
-                        <p className="text-slate-600 dark:text-slate-400 mb-6 md:mb-8 text-xs md:text-sm leading-relaxed">
+                        <p className="text-slate-600 dark:text-slate-400 mb-4 md:mb-4 text-xs md:text-sm leading-relaxed line-clamp-2"> {/* Compacted margin */}
                           {plan.description}
                         </p>
 
-                        <div className="mb-6 md:mb-8 flex items-baseline gap-1">
-                          <span className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
+                        <div className="mb-4 md:mb-6 flex items-baseline gap-1"> {/* Compacted margin */}
+                          <span className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white"> {/* Reduced font size */}
                             {plan.price}
                           </span>
-                          {/* Removed period or kept it small?? The original had plan.period. Assuming keep it but maybe smaller */}
-                          <span className="text-slate-500 font-medium text-xs md:text-base">
-                            {plan.period}
+                          <span className="text-slate-500 font-medium text-xs md:text-sm">
+                           / {plan.period}
                           </span>
                         </div>
 
                         <button
                           onClick={() => openOrderModal(plan)}
-                          className="w-full py-3 md:py-4 rounded-xl text-center font-bold transition-all mb-6 md:mb-10 text-sm md:text-base bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 cursor-pointer"
+                          className="w-full py-3 md:py-3 rounded-xl text-center font-bold transition-all mb-4 md:mb-6 text-sm md:text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 cursor-pointer"
                         >
                           অর্ডার করুন
                         </button>
 
-                        <div className="space-y-3 md:space-y-4 mt-auto">
+                        <div className="space-y-2 md:space-y-2 mt-auto"> {/* Reduced spacing */}
                           {(plan.features || []).map((feature: string, j: number) => (
-                            <div key={j} className="flex items-center gap-3">
-                              <div className="flex-shrink-0 w-4 h-4 md:w-5 md:h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                                <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-green-600" />
+                            <div key={j} className="flex items-center gap-2">
+                              <div className="flex-shrink-0 w-4 h-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"> {/* Slightly smaller icon container */}
+                                <Check className="w-2.5 h-2.5 text-green-600" /> {/* Slightly smaller icon */}
                               </div>
                               <span className="text-xs md:text-sm text-slate-700 dark:text-slate-300">
                                 {feature}

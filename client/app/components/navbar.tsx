@@ -60,11 +60,47 @@ export default function Navbar() {
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8">
                     <Link href="/" className={linkClass("/")}>হোম</Link>
-                    <Link href="/#demos" className={linkClass("/#demos")}>ডেমো</Link>
+                    <Link href="/blog" className={linkClass("/blog")}>ব্লগ</Link>
+                    <Link href="/features" className={linkClass("/features")}>ফিচার</Link>
 
-                    <Link href="/#pricing" className={linkClass("/#pricing")}>প্যাকেজ</Link>
-                    <Link href="/features" className={linkClass("/features")}>ই-কমার্স ফিচারগুলো</Link>
-                    <Link href="/#contact" className={linkClass("/#contact")}>যোগাযোগ</Link>
+                    <button
+                        onClick={() => {
+                            if (pathname === "/") {
+                                document.getElementById("demos")?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                                window.location.href = "/#demos";
+                            }
+                        }}
+                        className={linkClass("/#demos") + " bg-transparent border-none cursor-pointer hover:text-blue-600 transition-colors"}
+                    >
+                        ডেমো
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (pathname === "/") {
+                                document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                                window.location.href = "/#pricing";
+                            }
+                        }}
+                        className={linkClass("/#pricing") + " bg-transparent border-none cursor-pointer hover:text-blue-600 transition-colors"}
+                    >
+                        প্যাকেজ
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (pathname === "/") {
+                                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                                window.location.href = "/#contact";
+                            }
+                        }}
+                        className={linkClass("/#contact") + " bg-transparent border-none cursor-pointer hover:text-blue-600 transition-colors"}
+                    >
+                        যোগাযোগ
+                    </button>
                 </div>
 
                 {/* Desktop Auth Buttons */}
@@ -107,10 +143,50 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="md:hidden absolute top-20 left-0 w-full bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 p-6 flex flex-col gap-4 shadow-xl">
                     <Link href="/" className={mobileLinkClass("/")} onClick={() => setIsMobileMenuOpen(false)}>হোম</Link>
+                    <Link href="/blog" className={mobileLinkClass("/blog")} onClick={() => setIsMobileMenuOpen(false)}>ব্লগ</Link>
                     <Link href="/features" className={mobileLinkClass("/features")} onClick={() => setIsMobileMenuOpen(false)}>ফিচার</Link>
-                    <Link href="/#demos" className={mobileLinkClass("/#demos")} onClick={() => setIsMobileMenuOpen(false)}>ডেমো</Link>
-                    <Link href="/#pricing" className={mobileLinkClass("/#pricing")} onClick={() => setIsMobileMenuOpen(false)}>প্যাকেজ</Link>
-                    <Link href="/#contact" className={mobileLinkClass("/#contact")} onClick={() => setIsMobileMenuOpen(false)}>যোগাযোগ</Link>
+
+                    <button
+                        onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (pathname === "/") {
+                                document.getElementById("demos")?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                                window.location.href = "/#demos";
+                            }
+                        }}
+                        className={mobileLinkClass("/#demos") + " bg-transparent border-none cursor-pointer text-left"}
+                    >
+                        ডেমো
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (pathname === "/") {
+                                document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                                window.location.href = "/#pricing";
+                            }
+                        }}
+                        className={mobileLinkClass("/#pricing") + " bg-transparent border-none cursor-pointer text-left"}
+                    >
+                        প্যাকেজ
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (pathname === "/") {
+                                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                                window.location.href = "/#contact";
+                            }
+                        }}
+                        className={mobileLinkClass("/#contact") + " bg-transparent border-none cursor-pointer text-left"}
+                    >
+                        যোগাযোগ
+                    </button>
 
                     <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
 
