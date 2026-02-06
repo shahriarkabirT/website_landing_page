@@ -1,138 +1,73 @@
+"use client"
 
-import Link from "next/link";
-import { Facebook, Twitter, Instagram, Linkedin, Github } from "lucide-react";
+import Link from "next/link"
+import Image from "next/image"
+import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
     return (
-        <footer className="w-full border-t bg-background">
-            <div className="container px-4 py-12 mx-auto md:px-6">
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-4 lg:grid-cols-5">
-                    <div className="lg:col-span-2">
-                        <Link href="/" className="flex items-center gap-2 mb-4">
-                            <span className="text-xl font-bold tracking-tighter">
-                                BD Web Services
-                            </span>
+        <footer className="bg-slate-50 dark:bg-slate-950 pt-16 pb-8 border-t border-slate-200 dark:border-slate-800 font-sans">
+            <div className="mx-auto max-w-7xl px-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                    <div className="col-span-2 md:col-span-1 space-y-4">
+                        <Link href="/" className="flex items-center gap-2">
+                            <Image
+                                src="/logo.png"
+                                alt="idokans.com"
+                                width={120}
+                                height={40}
+                                className="h-10 w-auto object-contain"
+                            />
                         </Link>
-                        <p className="mb-4 text-muted-foreground max-w-xs">
-                            Professional website development services tailored for your business growth. We build fast, secure, and modern websites.
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-bangla">
+                            Your digital partner for business growth. Start your online journey today.
                         </p>
-                        <div className="flex space-x-4">
-                            <Link
-                                href="#"
-                                className="text-muted-foreground hover:text-foreground transition-colors"
-                                aria-label="Facebook"
-                            >
+                    </div>
+
+                    <div>
+                        <h4 className="font-bold text-slate-900 dark:text-white mb-4">Company</h4>
+                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                            <li><Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link></li>
+                            <li><Link href="/contact" className="hover:text-blue-600 transition-colors">Contact</Link></li>
+                            <li><Link href="/career" className="hover:text-blue-600 transition-colors">Career</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="font-bold text-slate-900 dark:text-white mb-4">Legal</h4>
+                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                            <li><Link href="/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/terms" className="hover:text-blue-600 transition-colors">Terms & Conditions</Link></li>
+                            <li><Link href="/refund" className="hover:text-blue-600 transition-colors">Refund Policy</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="font-bold text-slate-900 dark:text-white mb-4">Social</h4>
+                        <div className="flex gap-4">
+                            <a href="#" className="text-slate-400 hover:text-blue-600 transition-colors">
                                 <Facebook className="w-5 h-5" />
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-muted-foreground hover:text-foreground transition-colors"
-                                aria-label="Twitter"
-                            >
-                                <Twitter className="w-5 h-5" />
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-muted-foreground hover:text-foreground transition-colors"
-                                aria-label="Instagram"
-                            >
+                            </a>
+                            <a href="#" className="text-slate-400 hover:text-pink-600 transition-colors">
                                 <Instagram className="w-5 h-5" />
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-muted-foreground hover:text-foreground transition-colors"
-                                aria-label="LinkedIn"
-                            >
-                                <Linkedin className="w-5 h-5" />
-                            </Link>
+                            </a>
+                            <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">
+                                <Twitter className="w-5 h-5" />
+                            </a>
                         </div>
                     </div>
-                    <div>
-                        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">
-                            Services
-                        </h3>
-                        <ul className="space-y-3 text-muted-foreground">
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Web Development
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    E-commerce
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    UI/UX Design
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    SEO Optimization
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">
-                            Company
-                        </h3>
-                        <ul className="space-y-3 text-muted-foreground">
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    About Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Portfolio
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Blog
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Contact
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">
-                            Legal
-                        </h3>
-                        <ul className="space-y-3 text-muted-foreground">
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Privacy Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Terms of Service
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="#" className="hover:text-foreground transition-colors">
-                                    Cookie Policy
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
-                <div className="mt-12 pt-8 border-t flex flex-col items-center justify-between gap-4 md:flex-row">
-                    <p className="text-sm text-muted-foreground text-center md:text-left">
-                        &copy; {new Date().getFullYear()} BD Web Services. All rights reserved.
+
+                <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 text-center md:text-left">
+                        © {new Date().getFullYear()} <span className="font-bold text-slate-900 dark:text-white">idokans.com</span>. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-4">
-                        {/* Optional: Add payment icons or extra links here */}
+                    <div className="flex gap-6 text-sm text-slate-500 dark:text-slate-400">
+                        <Link href="/privacy" className="hover:text-blue-600">Privacy</Link>
+                        <Link href="/terms" className="hover:text-blue-600">Terms</Link>
                     </div>
                 </div>
             </div>
         </footer>
-    );
+    )
 }

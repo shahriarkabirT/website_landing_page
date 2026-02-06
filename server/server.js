@@ -58,6 +58,7 @@ app.use("/api/demo", demoRoutes)
 app.use("/api/upload", uploadRoutes)
 
 const __dirname = path.resolve()
+console.log("Serving static files from:", path.join(__dirname, "/uploads"))
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")))
 
 // Seed Admin and Plans
@@ -121,7 +122,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "Backend is running" })
 })
 
-const PORT = process.env.PORT || 5003
+const PORT = process.env.PORT || 5001
 app.listen(PORT, () => {
   console.log(`✓ Backend running on http://localhost:${PORT}`)
 })

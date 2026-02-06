@@ -74,6 +74,8 @@ export const registerUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phone: user.phone,
+                avatar: user.avatar,
             })
         } else {
             res.status(400).json({ message: "Invalid user data" })
@@ -107,6 +109,8 @@ export const authUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phone: user.phone,
+                avatar: user.avatar,
             })
         } else {
             res.status(401).json({ message: "Invalid email or password" })
@@ -204,6 +208,8 @@ export const verifyMagicLink = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            phone: user.phone,
+            avatar: user.avatar,
         })
 
     } catch (error) {
@@ -310,6 +316,8 @@ export const getUserProfile = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            phone: user.phone,
+            avatar: user.avatar,
         })
     } else {
         res.status(404).json({ message: "User not found" })

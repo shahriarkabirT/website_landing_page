@@ -117,11 +117,23 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  /* 80px for standard navbar height */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  button,
+  a {
+    @apply cursor-pointer;
   }
 }

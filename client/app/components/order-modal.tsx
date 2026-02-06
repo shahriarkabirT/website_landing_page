@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Check, Loader2, Info, ArrowLeft, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import Image from "next/image"
+import { useAuth } from "@/context/AuthContext"
 
 interface Demo {
     _id: string
@@ -20,9 +21,16 @@ interface OrderModalProps {
     planPrice: string
     isOpen: boolean
     onClose: () => void
+    initialData?: {
+        name?: string
+        phone?: string
+        email?: string
+        businessName?: string
+        address?: string
+    }
 }
 
-export default function OrderModal({ planName, planPrice, isOpen, onClose }: OrderModalProps) {
+export default function OrderModal({ planName, planPrice, isOpen, onClose, initialData }: OrderModalProps) {
     const [step, setStep] = useState(1) // 1: Template, 2: Details, 3: Payment
     const [demos, setDemos] = useState<Demo[]>([])
     const [loadingDemos, setLoadingDemos] = useState(true)
@@ -38,12 +46,22 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
         transactionId: ""
     })
 
+    const { user } = useAuth() // Use auth context
+
     useEffect(() => {
         if (isOpen) {
             setStep(1)
             fetchDemos()
+            // Prioritize initialData, then user data, then empty
+            setFormData(prev => ({
+                ...prev,
+                name: initialData?.name || user?.name || "",
+                phone: initialData?.phone || "",
+                email: initialData?.email || user?.email || "",
+                businessName: initialData?.businessName || "",
+            }))
         }
-    }, [isOpen])
+    }, [isOpen, initialData, user])
 
     const fetchDemos = async () => {
         try {
@@ -63,8 +81,17 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
             return
         }
         if (step === 2) {
-            if (!formData.name || !formData.phone) {
-                toast.error("অনুগ্রহ করে নাম এবং ফোন নম্বর পূরণ করুন") // Please fill name and phone
+            if (!formData.name.trim()) {
+                toast.error("অনুগ্রহ করে আপনার নাম দিন")
+                return
+            }
+            const phoneRegex = /^01[3-9]\d{8}$/
+            if (!phoneRegex.test(formData.phone)) {
+                toast.error("অনুগ্রহ করে সঠিক মোবাইল নম্বর দিন (১১ ডিজিট)")
+                return
+            }
+            if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                toast.error("অনুগ্রহ করে সঠিক ইমেইল দিন")
                 return
             }
         }
@@ -72,8 +99,8 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
     }
 
     const handleSubmit = async () => {
-        if (!formData.transactionId) {
-            toast.error("অনুগ্রহ করে ট্রানজ্যাকশন আইডি দিন") // Please provide Transaction ID
+        if (!formData.transactionId || formData.transactionId.length < 8) {
+            toast.error("সঠিক ট্রানজ্যাকশন আইডি দিন (কমপক্ষে ৮ অক্ষর)")
             return
         }
 
@@ -82,6 +109,7 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({
                     ...formData,
                     subscriptionType: planName,
@@ -91,11 +119,13 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
                 })
             })
 
+            const data = await res.json()
+
             if (res.ok) {
                 toast.success("অর্ডার সফলভাবে জমা দেওয়া হয়েছে!") // Order submitted successfully
                 onClose()
             } else {
-                toast.error("অর্ডার জমা দিতে ব্যর্থ হয়েছে") // Failed to submit order
+                toast.error(data.message || "অর্ডার জমা দিতে ব্যর্থ হয়েছে") // Failed to submit order
             }
         } catch (error) {
             toast.error("ত্রুটি ঘটেছে") // Error occurred
@@ -113,14 +143,14 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 w-[95vw] rounded-xl">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                     <div>
-                        <h2 className="text-xl font-bold font-bangla text-slate-900 dark:text-white">
+                        <h2 className="text-lg md:text-xl font-bold font-bangla text-slate-900 dark:text-white">
                             {step === 1 ? "টেমপ্লেট নির্বাচন করুন" : step === 2 ? "আপনার তথ্য দিন" : "পেমেন্ট সম্পন্ন করুন"}
                         </h2>
-                        <p className="text-sm text-slate-500 font-bangla">
+                        <p className="text-xs md:text-sm text-slate-500 font-bangla">
                             ধাপ {step} / ৩
                         </p>
                     </div>
@@ -130,20 +160,20 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 overflow-y-auto p-6">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6">
                     {step === 1 && (
                         <div className="space-y-4">
                             {loadingDemos ? (
                                 <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600" /></div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                                     {demos.map((demo) => (
                                         <div
                                             key={demo._id}
                                             onClick={() => setSelectedTemplate(demo._id)}
-                                            className={`cursor-pointer rounded-xl border-2 overflow-hidden transition-all relative group ${selectedTemplate === demo._id
-                                                    ? "border-blue-600 ring-4 ring-blue-600/10"
-                                                    : "border-slate-200 dark:border-slate-800 hover:border-blue-400"
+                                            className={`cursor-pointer rounded-lg md:rounded-xl border-2 overflow-hidden transition-all relative group ${selectedTemplate === demo._id
+                                                ? "border-blue-600 ring-2 md:ring-4 ring-blue-600/10"
+                                                : "border-slate-200 dark:border-slate-800 hover:border-blue-400"
                                                 }`}
                                         >
                                             <div className="aspect-[3/4] relative bg-slate-100">
@@ -162,8 +192,8 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose }: Ord
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="p-3 bg-white dark:bg-slate-950">
-                                                <p className="font-bold text-sm truncate">{demo.title}</p>
+                                            <div className="p-2 md:p-3 bg-white dark:bg-slate-950">
+                                                <p className="font-bold text-xs md:text-sm truncate">{demo.title}</p>
                                             </div>
                                         </div>
                                     ))}

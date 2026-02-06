@@ -1,11 +1,11 @@
 import express from "express"
 import { createConsultation, getConsultations, updateConsultationStatus } from "../controllers/consultationController.js"
-import { protect, authorize } from "../middleware/authMiddleware.js"
+import { protect, authorize, optionalProtect } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
 // Public request submission
-router.post("/", createConsultation)
+router.post("/", optionalProtect, createConsultation)
 
 // Admin-only retrieval
 router.get("/", protect, authorize("admin"), getConsultations)

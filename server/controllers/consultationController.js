@@ -12,6 +12,7 @@ export const createConsultation = async (req, res) => {
         }
 
         const consultation = await Consultation.create({
+            user: req.user ? req.user._id : undefined,
             name,
             phone,
             email,

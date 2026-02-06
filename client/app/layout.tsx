@@ -18,34 +18,16 @@ const bengaliFont = Hind_Siliguri({
 });
 
 export const metadata: Metadata = {
-  title: "Professional Website Development for Your Business | BD Web Services",
+  title: "Instant eCommerce Website Development | Starting @ 1000 BDT | No Hosting Fee",
   description:
-    "Professional website development service in Bangladesh. We create modern, fast & SEO-optimized business websites. Affordable packages for startups. Contact us today. | বাংলাদেশে প্রফেশনাল ওয়েবসাইট ডেভেলপমেন্ট সার্ভিস — দ্রুত, নিরাপদ, SEO রেডি ওয়েবসাইট।",
+    "Launch your online store in minutes! Professional eCommerce website service in Bangladesh starting from 1000 Taka. No hosting fees, free consultation. | মাত্র ১০০০ টাকায় আপনার ই-কমার্স ওয়েবসাইট - আজই ব্যবসা শুরু করুন।",
   keywords:
-    "website development Bangladesh, web design company Bangladesh, affordable website design BD, ecommerce development BD, landing page design BD, ব্যবসার ওয়েবসাইট, ওয়েবসাইট ডেভেলপমেন্ট সার্ভিস, ডোমেইন হোস্টিং সহ ওয়েবসাইট",
+    "ecommerce website bangladesh, instant ecommerce site, low cost website bd, 1000 taka website, online store builder, no hosting fee website, ই-কমার্স ওয়েবসাইট তৈরি, কম খরচে ই-কমার্স, অনলাইন দোকান",
   openGraph: {
-    title: "Professional Website Development for Your Business",
+    title: "নিজের ই-কমার্স ওয়েবসাইট ১০০০ টাকায় | Instant eCommerce Development",
     description:
-      "Get a fast, modern, mobile-friendly website built for growth. আধুনিক ও প্রফেশনাল ওয়েবসাইট ডেভেলপমেন্ট সার্ভিস",
+      "Get your fully functional eCommerce website in minutes. No hosting charges. Start selling today! মাত্র ১০০০ টাকায় ই-কমার্স ওয়েবসাইট।",
     type: "website",
-  },
-  generator: "v0.app",
-  icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
   },
 };
 

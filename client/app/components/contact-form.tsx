@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import OrderModal from "./order-modal"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -51,7 +52,18 @@ export default function ContactForm() {
       }
     }
     fetchPlans()
+
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      setForm(prev => ({
+        ...prev,
+        name: user.name || "",
+        email: user.email || "",
+      }))
+    }
+  }, [user])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -63,57 +75,22 @@ export default function ContactForm() {
     setForm({ ...form, subscriptionType: value })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus("loading")
-    setError("")
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/mail`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(form),
-        }
-      )
-
-      const data = await res.json()
-
-      if (data.success) {
-        setStatus("success")
-        toast.success("Order placed successfully!")
-
-        // If guest registration occurred, auto-login
-        if (data.user && data.user.token) {
-          login(data.user)
-        }
-
-        // Redirect to dashboard
-        setTimeout(() => {
-          if (data.user?.role === "admin") {
-            router.push("/admin/dashboard")
-          } else {
-            router.push("/dashboard")
-          }
-        }, 1500)
-      } else {
-        setStatus("error")
-        setError(data.error || "Failed to process order")
-        toast.error(data.error || "Order failed")
-      }
-    } catch (err) {
-      setStatus("error")
-      setError(err instanceof Error ? err.message : "Network error")
-      toast.error("Network error")
+    if (!form.name || !form.phone) {
+      toast.error("Please fill in required fields")
+      return
     }
+    setIsModalOpen(true)
   }
 
+  const selectedPlan = plans.find(p => p.name === form.subscriptionType)
+  const planPrice = selectedPlan ? `${selectedPlan.price} ${selectedPlan.period}` : "Custom Price"
+
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-12 shadow-2xl border border-slate-100 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-800">
       <div className="mb-10 text-center">
         <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
           Order Now / অর্ডার করুন
@@ -261,6 +238,14 @@ export default function ContactForm() {
           </div>
         )}
       </form>
+
+      <OrderModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        planName={form.subscriptionType || "Custom Plan"}
+        planPrice={planPrice}
+        initialData={form}
+      />
     </div>
   )
 }

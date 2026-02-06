@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
     refreshToken: { type: String },
     magicLinkToken: { type: String },
     magicLinkExpires: { type: Date },
+    // Profile
+    phone: { type: String },
+    avatar: { type: String },
 }, { timestamps: true })
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
@@ -50,6 +53,7 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 const consultationSchema = new mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     name: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String },

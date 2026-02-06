@@ -5,6 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, ZoomOut, ArrowRight, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+    type CarouselApi,
+} from "@/components/ui/carousel"
 
 interface Demo {
     _id: string;
@@ -18,6 +26,20 @@ export default function DemoSection() {
     const [selectedDemo, setSelectedDemo] = useState<Demo | null>(null);
     const [isZoomed, setIsZoomed] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [api, setApi] = useState<CarouselApi>()
+    const [current, setCurrent] = useState(0)
+
+    useEffect(() => {
+        if (!api) {
+            return
+        }
+
+        setCurrent(api.selectedScrollSnap())
+
+        api.on("select", () => {
+            setCurrent(api.selectedScrollSnap())
+        })
+    }, [api])
 
     useEffect(() => {
         const fetchDemos = async () => {
@@ -61,7 +83,7 @@ export default function DemoSection() {
     if (demos.length === 0) return null;
 
     return (
-        <section className="py-24 bg-slate-50 dark:bg-slate-900/50">
+        <section id="demos" className="py-12 md:py-24 bg-slate-50 dark:bg-slate-900/50">
             <div className="container px-4 md:px-6 mx-auto">
                 <div className="max-w-4xl mx-auto text-center mb-12">
                     <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -72,42 +94,68 @@ export default function DemoSection() {
                     </p>
                 </div>
 
-                {/* Grid of Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    {demos.map((demo) => (
-                        <motion.div
-                            key={demo._id}
-                            layoutId={`demo-card-${demo._id}`}
-                            className="group relative bg-white dark:bg-slate-950 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800 cursor-pointer flex flex-col"
-                            onClick={() => setSelectedDemo(demo)}
-                        >
-                            {/* Image Preview */}
-                            <div className="relative aspect-[3/4] overflow-hidden w-full">
-                                <Image
-                                    src={demo.imageUrl.startsWith("http") ? demo.imageUrl : `${process.env.NEXT_PUBLIC_BACKEND_URL}${demo.imageUrl}`}
-                                    alt={demo.title}
-                                    fill
-                                    unoptimized
-                                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                                />
+                {/* Carousel Slider */}
+                <div className="relative">
+                    <Carousel
+                        opts={{
+                            align: "center",
+                            loop: true,
+                        }}
+                        setApi={setApi}
+                        className="w-full max-w-[95vw] md:max-w-6xl mx-auto"
+                    >
+                        <CarouselContent className="-ml-4 py-8">
+                            {demos.map((demo, index) => {
+                                const isActive = current === index;
+                                return (
+                                    <CarouselItem key={demo._id} className="pl-4 basis-[70%] md:basis-1/2 lg:basis-1/3">
+                                        <motion.div
+                                            layoutId={`demo-card-${demo._id}`}
+                                            className={cn(
+                                                "group relative bg-white dark:bg-slate-950 rounded-2xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 cursor-pointer flex flex-col transition-all duration-500 h-full",
+                                                // Mobile: Highlight center item (scale-100), shrink others (scale-85)
+                                                isActive ? "scale-100 opacity-100 ring-2 ring-blue-500/50 z-10" : "scale-90 opacity-60 z-0",
+                                                // Desktop: ALWAYS scale-100, opacity-100, no ring (uniform size), override z-index
+                                                "md:scale-100 md:opacity-100 md:ring-0 md:z-0",
+                                                "hover:shadow-2xl hover:scale-[1.02] hover:opacity-100" // Hover effects
+                                            )}
+                                            onClick={() => setSelectedDemo(demo)}
+                                        >
+                                            {/* Image Preview */}
+                                            <div className="relative aspect-[3/4] overflow-hidden w-full">
+                                                <Image
+                                                    src={demo.imageUrl.startsWith("http") ? demo.imageUrl : `${process.env.NEXT_PUBLIC_BACKEND_URL}${demo.imageUrl}`}
+                                                    alt={demo.title}
+                                                    fill
+                                                    unoptimized
+                                                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                                />
 
-                                {/* Overlay Hint */}
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
-                                    <span className="bg-white/90 text-slate-900 px-4 py-2 rounded-full font-medium text-sm flex items-center shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                                        View Demo <ArrowRight className="ml-2 w-4 h-4" />
-                                    </span>
-                                </div>
-                            </div>
+                                                {/* Overlay Hint */}
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+                                                    <span className="bg-white/90 text-slate-900 px-4 py-2 rounded-full font-medium text-sm flex items-center shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                                                        View Demo <ArrowRight className="ml-2 w-4 h-4" />
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                            {/* Card Footer */}
-                            <div className="p-6 mt-auto border-t border-slate-100 dark:border-slate-800">
-                                <h3 className="text-lg font-bold mb-1">{demo.title}</h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2">
-                                    {demo.description}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
+                                            {/* Card Footer */}
+                                            <div className="p-6 mt-auto border-t border-slate-100 dark:border-slate-800">
+                                                <h3 className="text-lg font-bold mb-1">{demo.title}</h3>
+                                                <p className="text-sm text-muted-foreground line-clamp-2">
+                                                    {demo.description}
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    </CarouselItem>
+                                );
+                            })}
+                        </CarouselContent>
+                        <div className="hidden md:block">
+                            <CarouselPrevious className="-left-4 lg:-left-12" />
+                            <CarouselNext className="-right-4 lg:-right-12" />
+                        </div>
+                    </Carousel>
                 </div>
             </div>
 

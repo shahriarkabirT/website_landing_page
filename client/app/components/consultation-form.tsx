@@ -52,12 +52,12 @@ export default function ConsultationForm() {
 
     return (
         <section
-            className="py-24 bg-slate-50 dark:bg-slate-950/50 relative overflow-hidden"
+            className="py-12 md:py-24 bg-slate-50 dark:bg-slate-950/50 relative overflow-hidden"
             id="consultation"
         >
             {bgElement}
-            <div className="mx-auto max-w-7xl px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div className="mx-auto max-w-7xl px-4 md:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     {/* Text Content */}
                     <div className="space-y-8">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
@@ -65,12 +65,12 @@ export default function ConsultationForm() {
                             <span className="text-sm font-black uppercase tracking-wider">Expert Advice</span>
                         </div>
 
-                        <h2 className="text-5xl sm:text-6xl font-black text-slate-900 dark:text-white leading-[1.1]">
+                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-white leading-[1.1]">
                             Get a Free <br />
                             <span className="text-blue-600">Consultation</span>
                         </h2>
 
-                        <p className="text-xl text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
+                        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
                             Confused about where to start? Speak with our experts and get a customized roadmap for your e-commerce journey.
                         </p>
 
@@ -88,7 +88,7 @@ export default function ConsultationForm() {
                     </div>
 
                     {/* Form */}
-                    <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-8 sm:p-12 shadow-2xl border border-slate-100 dark:border-slate-800 relative overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-800 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-bl-[100px]" />
 
                         <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
