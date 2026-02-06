@@ -60,47 +60,48 @@ export default function Navbar() {
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8">
                     <Link href="/" className={linkClass("/")}>হোম</Link>
-                    <Link href="/blog" className={linkClass("/blog")}>ব্লগ</Link>
+
                     <Link href="/features" className={linkClass("/features")}>ফিচার</Link>
 
-                    <button
-                        onClick={() => {
+                    <Link
+                        href="/#demos"
+                        onClick={(e) => {
                             if (pathname === "/") {
+                                e.preventDefault();
                                 document.getElementById("demos")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                                window.location.href = "/#demos";
                             }
                         }}
-                        className={linkClass("/#demos") + " bg-transparent border-none cursor-pointer hover:text-blue-600 transition-colors"}
+                        className={linkClass("/#demos")}
                     >
                         ডেমো
-                    </button>
+                    </Link>
 
-                    <button
-                        onClick={() => {
+                    <Link
+                        href="/#pricing"
+                        onClick={(e) => {
                             if (pathname === "/") {
+                                e.preventDefault();
                                 document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                                window.location.href = "/#pricing";
                             }
                         }}
-                        className={linkClass("/#pricing") + " bg-transparent border-none cursor-pointer hover:text-blue-600 transition-colors"}
+                        className={linkClass("/#pricing")}
                     >
                         প্যাকেজ
-                    </button>
+                    </Link>
 
-                    <button
-                        onClick={() => {
+                    <Link
+                        href="/#contact"
+                        onClick={(e) => {
                             if (pathname === "/") {
+                                e.preventDefault();
                                 document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                                window.location.href = "/#contact";
                             }
                         }}
-                        className={linkClass("/#contact") + " bg-transparent border-none cursor-pointer hover:text-blue-600 transition-colors"}
+                        className={linkClass("/#contact")}
                     >
                         যোগাযোগ
-                    </button>
+                    </Link>
+                    <Link href="/blog" className={linkClass("/blog")}>ব্লগ</Link>
                 </div>
 
                 {/* Desktop Auth Buttons */}
@@ -146,47 +147,47 @@ export default function Navbar() {
                     <Link href="/blog" className={mobileLinkClass("/blog")} onClick={() => setIsMobileMenuOpen(false)}>ব্লগ</Link>
                     <Link href="/features" className={mobileLinkClass("/features")} onClick={() => setIsMobileMenuOpen(false)}>ফিচার</Link>
 
-                    <button
-                        onClick={() => {
+                    <Link
+                        href="/#demos"
+                        onClick={(e) => {
                             setIsMobileMenuOpen(false);
                             if (pathname === "/") {
+                                e.preventDefault();
                                 document.getElementById("demos")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                                window.location.href = "/#demos";
                             }
                         }}
-                        className={mobileLinkClass("/#demos") + " bg-transparent border-none cursor-pointer text-left"}
+                        className={mobileLinkClass("/#demos")}
                     >
                         ডেমো
-                    </button>
+                    </Link>
 
-                    <button
-                        onClick={() => {
+                    <Link
+                        href="/#pricing"
+                        onClick={(e) => {
                             setIsMobileMenuOpen(false);
                             if (pathname === "/") {
+                                e.preventDefault();
                                 document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                                window.location.href = "/#pricing";
                             }
                         }}
-                        className={mobileLinkClass("/#pricing") + " bg-transparent border-none cursor-pointer text-left"}
+                        className={mobileLinkClass("/#pricing")}
                     >
                         প্যাকেজ
-                    </button>
+                    </Link>
 
-                    <button
-                        onClick={() => {
+                    <Link
+                        href="/#contact"
+                        onClick={(e) => {
                             setIsMobileMenuOpen(false);
                             if (pathname === "/") {
+                                e.preventDefault();
                                 document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                                window.location.href = "/#contact";
                             }
                         }}
-                        className={mobileLinkClass("/#contact") + " bg-transparent border-none cursor-pointer text-left"}
+                        className={mobileLinkClass("/#contact")}
                     >
                         যোগাযোগ
-                    </button>
+                    </Link>
 
                     <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
 

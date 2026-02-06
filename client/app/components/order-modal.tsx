@@ -247,11 +247,11 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-xl border">
                                         <span className="font-bold text-pink-600">bKash Personal</span>
-                                        <span className="font-mono font-bold text-lg">01744496737</span>
+                                        <span className="font-mono font-bold text-lg">01795148792</span>
                                     </div>
                                     <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-xl border">
                                         <span className="font-bold text-orange-600">Nagad Personal</span>
-                                        <span className="font-mono font-bold text-lg">01744496737</span>
+                                        <span className="font-mono font-bold text-lg">01795148792</span>
                                     </div>
                                 </div>
                             </div>
@@ -277,8 +277,8 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                                         <div className="text-center py-6 space-y-4">
                                             <h3 className="font-bold text-xl font-bangla">আমাদের কল করুন</h3>
                                             <p className="text-slate-500 font-bangla">যেকোনো সমস্যায় আমাদের সাপোর্ট নাম্বারে কল করুন।</p>
-                                            <a href="tel:01744496737" className="block p-4 bg-green-50 text-green-700 font-bold text-xl rounded-xl">
-                                                01744496737
+                                            <a href="tel:01795148792" className="block p-4 bg-green-50 text-green-700 font-bold text-xl rounded-xl">
+                                                01795148792
                                             </a>
                                         </div>
                                     </DialogContent>

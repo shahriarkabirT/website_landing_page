@@ -81,7 +81,7 @@ export default function ConsultationForm() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Call us</p>
-                                    <p className="text-lg font-black text-slate-900 dark:text-white">+880 1XXX XXXXXX</p>
+                                    <p className="text-lg font-black text-slate-900 dark:text-white">+880 1795148792</p>
                                 </div>
                             </div>
                         </div>
