@@ -26,12 +26,25 @@ app.set("trust proxy", 1)
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://idokans.com",
-      "https://www.idokans.com",
-      process.env.FRONTEND_URL
-    ].filter(Boolean),
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:3000",
+        "https://idokans.com",
+        "https://www.idokans.com",
+        process.env.FRONTEND_URL
+      ].filter(Boolean)
+
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true)
+
+      // Check if origin is in the allowed list or is a subdomain of idokans.com
+      if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".idokans.com")) {
+        callback(null, true)
+      } else {
+        console.log("CORS blocked origin:", origin)
+        callback(new Error("Not allowed by CORS"))
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
