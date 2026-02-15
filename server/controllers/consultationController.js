@@ -1,4 +1,4 @@
-import { Consultation } from "../models/index.js"
+import { Consultation, User } from "../models/index.js"
 
 export const createConsultation = async (req, res) => {
     try {
@@ -18,6 +18,25 @@ export const createConsultation = async (req, res) => {
             email,
             address,
         })
+
+        // Sync with User Profile if logged in
+        if (req.user) {
+            const user = await User.findById(req.user._id)
+            if (user) {
+                let updated = false
+                if (!user.phone && phone) {
+                    user.phone = phone
+                    updated = true
+                }
+                if (!user.name && name) {
+                    user.name = name
+                    updated = true
+                }
+                if (updated) {
+                    await user.save()
+                }
+            }
+        }
 
         res.status(201).json({
             success: true,

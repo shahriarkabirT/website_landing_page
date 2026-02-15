@@ -6,12 +6,13 @@ import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboard, LogOut, User, Menu, X } from "lucide-react"
 import { useState, useEffect } from "react"
-
 import Image from "next/image"
+import LoginModal from "./auth/login-modal"
 
 export default function Navbar() {
     const { user, logout } = useAuth()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
     const pathname = usePathname()
     const [activeSection, setActiveSection] = useState("")
 
@@ -113,15 +114,23 @@ export default function Navbar() {
                                     <LayoutDashboard className="w-4 h-4" /> ড্যাশবোর্ড
                                 </Button>
                             </Link>
-                            <Button onClick={logout} variant="outline" className="flex items-center gap-2 font-bold text-red-600 border-red-100 hover:bg-red-50 rounded-xl">
+                            <Button
+                                onClick={logout}
+                                variant="outline"
+                                className="flex items-center gap-2 font-black text-red-600 border-red-100 hover:bg-red-50 hover:text-red-700 hover:border-red-200 rounded-xl transition-all"
+                            >
                                 <LogOut className="w-4 h-4" /> লগআউট
                             </Button>
                         </div>
                     ) : (
                         <div className="flex items-center gap-3">
-                            <Link href="/login">
-                                <Button variant="ghost" className="font-bold text-slate-700 dark:text-slate-300">লগিন</Button>
-                            </Link>
+                            <Button
+                                variant="ghost"
+                                onClick={() => setIsLoginModalOpen(true)}
+                                className="font-bold text-slate-700 dark:text-slate-300"
+                            >
+                                লগিন
+                            </Button>
                             <Link href="/register">
                                 <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 px-6">
                                     শুরু করুন
@@ -198,15 +207,23 @@ export default function Navbar() {
                                     <LayoutDashboard className="w-4 h-4" /> ড্যাশবোর্ড
                                 </Button>
                             </Link>
-                            <Button onClick={() => { logout(); setIsMobileMenuOpen(false); }} variant="outline" className="w-full justify-start flex items-center gap-2 font-bold text-red-600 border-red-100 hover:bg-red-50 rounded-xl">
+                            <Button
+                                onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                                variant="outline"
+                                className="w-full justify-start flex items-center gap-2 font-black text-red-600 border-red-100 hover:bg-red-50 hover:text-red-700 hover:border-red-200 rounded-xl transition-all"
+                            >
                                 <LogOut className="w-4 h-4" /> লগআউট
                             </Button>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3">
-                            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                                <Button variant="ghost" className="w-full justify-start font-bold text-slate-700 dark:text-slate-300">লগিন</Button>
-                            </Link>
+                            <Button
+                                variant="ghost"
+                                onClick={() => { setIsLoginModalOpen(true); setIsMobileMenuOpen(false); }}
+                                className="w-full justify-start font-bold text-slate-700 dark:text-slate-300"
+                            >
+                                লগিন
+                            </Button>
                             <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
                                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20">
                                     শুরু করুন
@@ -216,6 +233,7 @@ export default function Navbar() {
                     )}
                 </div>
             )}
+            <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
         </nav>
     )
 }

@@ -22,7 +22,12 @@ function AuthSuccessContent() {
                     const userData = await res.json()
                     login(userData)
                     toast.success("Google login successful")
-                    if (userData.role === "admin") {
+
+                    const returnTo = localStorage.getItem("returnTo")
+                    if (returnTo) {
+                        localStorage.removeItem("returnTo")
+                        router.push(returnTo)
+                    } else if (userData.role === "admin") {
                         router.push("/admin/dashboard")
                     } else {
                         router.push("/dashboard")

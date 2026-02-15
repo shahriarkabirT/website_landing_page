@@ -10,7 +10,9 @@ export function middleware(request: NextRequest) {
     const isAdmin = request.nextUrl.pathname.startsWith("/admin")
 
     if ((isDashboard || isAdmin) && !token) {
-        return NextResponse.redirect(new URL("/login", request.url))
+        const url = new URL("/login", request.url)
+        url.searchParams.set("redirect", request.nextUrl.pathname + request.nextUrl.search)
+        return NextResponse.redirect(url)
     }
 
     // Role based protection could go here if we could decode the token,

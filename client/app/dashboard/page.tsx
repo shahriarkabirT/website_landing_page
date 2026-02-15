@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
-import { Package, Clock, CheckCircle2, ChevronRight, Loader2, Home, User as UserIcon, Camera, Save } from "lucide-react"
+import { Package, Clock, CheckCircle2, ChevronRight, Loader2, Home, User as UserIcon, Camera, Save, Sparkles } from "lucide-react"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -235,20 +235,26 @@ export default function UserDashboard() {
                         ) : (
                             <div className="grid gap-4">
                                 {consultations.map((consultation: any) => (
-                                    <div key={consultation._id} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 transition-all flex items-center justify-between">
-                                        <div className="space-y-1 min-w-0">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <h4 className="font-bold text-slate-900 dark:text-white truncate max-w-full">{consultation.name}</h4>
-                                                <span className={`text-[10px] font-bold uppercase tracking-wide whitespace-nowrap ${consultation.status === 'pending' ? 'text-orange-600' :
-                                                    consultation.status === 'handled' ? 'text-green-600' : 'text-red-600'
-                                                    }`}>
-                                                    {consultation.status}
-                                                </span>
+                                    <div key={consultation._id} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-blue-100 transition-all flex items-center justify-between group">
+                                        <div className="flex items-center gap-4 min-w-0">
+                                            <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600 flex-shrink-0">
+                                                <Sparkles className="w-5 h-5" />
                                             </div>
-                                            <div className="text-xs text-slate-500 truncate">
-                                                {consultation.phone} • {new Date(consultation.createdAt).toLocaleDateString()}
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <h4 className="font-bold text-slate-900 dark:text-white text-base truncate">{consultation.name}</h4>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${consultation.status === 'pending' ? 'bg-orange-50 text-orange-600' :
+                                                        consultation.status === 'handled' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                                                        }`}>
+                                                        {consultation.status === 'handled' ? 'পর্যবেক্ষণ করা হয়েছে' : consultation.status === 'pending' ? 'অপেক্ষা করছে' : consultation.status}
+                                                    </span>
+                                                </div>
+                                                <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
+                                                    {consultation.phone} • {new Date(consultation.createdAt).toLocaleDateString("bn-BD")}
+                                                </div>
                                             </div>
                                         </div>
+                                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors flex-shrink-0 ml-2" />
                                     </div>
                                 ))}
                             </div>
