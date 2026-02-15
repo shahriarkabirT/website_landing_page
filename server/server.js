@@ -14,6 +14,7 @@ import paymentRoutes from "./routes/paymentRoutes.js"
 import consultationRoutes from "./routes/consultationRoutes.js"
 import demoRoutes from "./routes/demoRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
+import { globalLimiter, authLimiter, consultationLimiter, orderLimiter } from "./middleware/rateLimiter.js"
 import { User, Plan } from "./models/index.js"
 import path from "path"
 
@@ -56,12 +57,14 @@ app.use(
 app.use(passport.initialize())
 
 // Routes
+app.use(globalLimiter) // Apply global rate limit to all routes
+
 app.use("/api/mail", mailRoutes)
 app.use("/api/admin", adminRoutes)
-app.use("/api/auth", authRoutes)
+app.use("/api/auth", authLimiter, authRoutes) // Strict auth limiter
 app.use("/api/user", userRoutes)
-app.use("/api/payment", paymentRoutes)
-app.use("/api/consultation", consultationRoutes)
+app.use("/api/payment", orderLimiter, paymentRoutes) // Protect checkout
+app.use("/api/consultation", consultationLimiter, consultationRoutes) // Spam prevention
 app.use("/api/demo", demoRoutes)
 app.use("/api/upload", uploadRoutes)
 
