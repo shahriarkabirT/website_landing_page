@@ -54,13 +54,11 @@ export default function Pricing() {
 
   if (loading) {
     return (
-      <div className="py-24 flex items-center justify-center">
+      <section id="pricing" className="py-24 flex items-center justify-center bg-white dark:bg-slate-950">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
+      </section>
     )
   }
-
-  if (plans.length === 0) return null
 
   const bgElement = (
     <div className="w-full h-full relative opacity-40 dark:opacity-20 pointer-events-none">
@@ -120,70 +118,74 @@ export default function Pricing() {
               className="w-full max-w-[95vw] md:max-w-7xl mx-auto"
             >
               <CarouselContent className="-ml-1 md:-ml-4 py-8">
-                {processedPlans.map((plan, i) => {
-                  const isActive = current === i;
-                  return (
-                    <CarouselItem key={i} className="pl-1 md:pl-4 basis-[75%] md:basis-1/3 h-auto">
-                      <div
-                        className={cn(
-                          "rounded-[2rem] border-2 transition-all p-5 md:p-6 relative flex flex-col h-full duration-500", // Reduced md:p-10 to md:p-6
-                          // Mobile: Highlight center item, shrink others
-                          isActive ? "scale-100 opacity-100 z-10" : "scale-90 opacity-60 z-0",
-                          // Desktop: Uniform size
-                          "md:scale-100 md:opacity-100 md:z-0",
-                          plan.highlight
-                            ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10"
-                            : "border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:border-slate-300 dark:hover:border-slate-600",
-                          "backdrop-blur-sm"
-                        )}
-                      >
-                        {plan.highlight && (
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wide whitespace-nowrap">
-                              BEST VALUE
-                            </span>
-                          </div>
-                        )}
-
-                        <h3 className="text-xl md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-2"> {/* Compacted text size and margin */}
-                          {plan.name}
-                        </h3>
-                        <p className="text-slate-600 dark:text-slate-400 mb-4 md:mb-4 text-xs md:text-sm leading-relaxed line-clamp-2"> {/* Compacted margin */}
-                          {plan.description}
-                        </p>
-
-                        <div className="mb-4 md:mb-6 flex items-baseline gap-1"> {/* Compacted margin */}
-                          <span className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white"> {/* Reduced font size */}
-                            {plan.price}
-                          </span>
-                          <span className="text-slate-500 font-medium text-xs md:text-sm">
-                           / {plan.period}
-                          </span>
-                        </div>
-
-                        <button
-                          onClick={() => openOrderModal(plan)}
-                          className="w-full py-3 md:py-3 rounded-xl text-center font-bold transition-all mb-4 md:mb-6 text-sm md:text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 cursor-pointer"
+                {processedPlans.length > 0 ? (
+                  processedPlans.map((plan, i) => {
+                    const isActive = current === i;
+                    return (
+                      <CarouselItem key={i} className="pl-1 md:pl-4 basis-[75%] md:basis-1/3 h-auto">
+                        <div
+                          className={cn(
+                            "rounded-[2rem] border-2 transition-all p-5 md:p-6 relative flex flex-col h-full duration-500",
+                            isActive ? "scale-100 opacity-100 z-10" : "scale-90 opacity-60 z-0",
+                            "md:scale-100 md:opacity-100 md:z-0",
+                            plan.highlight
+                              ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 shadow-2xl shadow-blue-500/10"
+                              : "border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:border-slate-300 dark:hover:border-slate-600",
+                            "backdrop-blur-sm"
+                          )}
                         >
-                          অর্ডার করুন
-                        </button>
-
-                        <div className="space-y-2 md:space-y-2 mt-auto"> {/* Reduced spacing */}
-                          {(plan.features || []).map((feature: string, j: number) => (
-                            <div key={j} className="flex items-center gap-2">
-                              <div className="flex-shrink-0 w-4 h-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"> {/* Slightly smaller icon container */}
-                                <Check className="w-2.5 h-2.5 text-green-600" /> {/* Slightly smaller icon */}
-                              </div>
-                              <span className="text-xs md:text-sm text-slate-700 dark:text-slate-300">
-                                {feature}
+                          {plan.highlight && (
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wide whitespace-nowrap">
+                                BEST VALUE
                               </span>
                             </div>
-                          ))}
+                          )}
+
+                          <h3 className="text-xl md:text-xl font-bold text-slate-900 dark:text-white mb-2 md:mb-2">
+                            {plan.name}
+                          </h3>
+                          <p className="text-slate-600 dark:text-slate-400 mb-4 md:mb-4 text-xs md:text-sm leading-relaxed line-clamp-2">
+                            {plan.description}
+                          </p>
+
+                          <div className="mb-4 md:mb-6 flex items-baseline gap-1">
+                            <span className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">
+                              {plan.price}
+                            </span>
+                            <span className="text-slate-500 font-medium text-xs md:text-sm">
+                              / {plan.period}
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() => openOrderModal(plan)}
+                            className="w-full py-3 md:py-3 rounded-xl text-center font-bold transition-all mb-4 md:mb-6 text-sm md:text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 cursor-pointer"
+                          >
+                            অর্ডার করুন
+                          </button>
+
+                          <div className="space-y-2 md:space-y-2 mt-auto">
+                            {(plan.features || []).map((feature: string, j: number) => (
+                              <div key={j} className="flex items-center gap-2">
+                                <div className="flex-shrink-0 w-4 h-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                  <Check className="w-2.5 h-2.5 text-green-600" />
+                                </div>
+                                <span className="text-xs md:text-sm text-slate-700 dark:text-slate-300">
+                                  {feature}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    </CarouselItem>
-                  )
-                })}
+                      </CarouselItem>
+                    )
+                  })
+                ) : (
+                  <div className="w-full py-12 text-center text-slate-500">
+                    আমাদের প্যাকেজগুলো শীঘ্রই আসছে। অনুগ্রহ করে আমাদের সাথে যোগাযোগ করুন।
+                  </div>
+                )}
               </CarouselContent>
               <div className="hidden md:block">
                 <CarouselPrevious className="-left-4 lg:-left-12" />
