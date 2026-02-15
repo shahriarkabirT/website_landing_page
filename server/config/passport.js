@@ -8,6 +8,7 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID || "PLACEHOLDER",
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || "PLACEHOLDER",
             callbackURL: "/api/auth/google/callback",
+            proxy: true,
         },
         async (accessToken, refreshToken, profile, done) => {
             const newUser = {
