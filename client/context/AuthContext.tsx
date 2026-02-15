@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error("Logout failed", error)
         }
         setUser(null)
-        // localStorage.removeItem("user") // Cleanup legacy if exists
+
     }
 
     return (
