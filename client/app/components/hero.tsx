@@ -8,12 +8,32 @@ export default function Hero() {
     <section
       className="relative overflow-hidden bg-white dark:bg-slate-950 flex items-center"
     >
-      {/* Background with Parallax */}
-      <div
-        className="absolute inset-0 z-0"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(120,119,198,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.05),transparent_50%)]" />
+      {/* Optimized Performance Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* SVG Dot Pattern - Efficient */}
+        <div
+          className="absolute inset-0 opacity-[0.12] dark:opacity-[0.18]"
+          style={{
+            backgroundImage: `radial-gradient(#64748b 1px, transparent 1px)`,
+            backgroundSize: '32px 32px'
+          }}
+        />
+
+        {/* Optimized Radial Gradients - Concentrated on upper side */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.15), transparent 45%),
+              radial-gradient(circle at 20% 15%, rgba(79, 70, 229, 0.15), transparent 45%),
+              radial-gradient(circle at 50% 5%, rgba(147, 51, 234, 0.08), transparent 35%),
+              radial-gradient(circle at 60% 30%, rgba(20, 184, 166, 0.08), transparent 25%)
+            `
+          }}
+        />
+
+        {/* Simple Vertical Fade Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white dark:from-slate-950 dark:via-transparent dark:to-slate-950" />
       </div>
 
       {/* Content */}
@@ -71,7 +91,7 @@ export default function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
           >
             <a
-              href="#contact"
+              href="#pricing"
               className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 rounded-2xl bg-blue-600 text-white text-lg font-bold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-xl shadow-blue-500/25"
             >
               অর্ডার করুন
