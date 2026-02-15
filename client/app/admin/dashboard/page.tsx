@@ -75,7 +75,7 @@ export default function DashboardPage() {
     useEffect(() => {
         if (!loading) {
             if (!user || user.role !== "admin") {
-                router.push("/login")
+                router.push("/")
                 return
             }
             fetchData()

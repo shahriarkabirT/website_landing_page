@@ -22,7 +22,7 @@ export default function UserDashboard() {
         if (loading) return
 
         if (!user) {
-            router.push("/login")
+            router.push("/")
             return
         }
 

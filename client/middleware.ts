@@ -15,10 +15,6 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    // Role based protection could go here if we could decode the token,
-    // but for now we rely on API security and Client Components to handle role mismatch
-    // (e.g. User trying to access /admin will be kicked out by page/layout logic)
-
     return NextResponse.next()
 }
 

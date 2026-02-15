@@ -67,7 +67,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         setUser(null)
         // localStorage.removeItem("user") // Cleanup legacy if exists
-        router.push("/login")
     }
 
     return (
