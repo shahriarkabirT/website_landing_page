@@ -56,7 +56,7 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
             setFormData(prev => ({
                 ...prev,
                 name: initialData?.name || user?.name || "",
-                phone: initialData?.phone || "",
+                phone: initialData?.phone || user?.phone || "",
                 email: initialData?.email || user?.email || "",
                 businessName: initialData?.businessName || "",
             }))

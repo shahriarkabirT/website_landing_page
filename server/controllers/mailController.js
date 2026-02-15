@@ -1,4 +1,4 @@
-import { sendMail } from "../services/mailService.js"
+import { sendMail, sendOrderConfirmationEmail, sendOrderNotificationToAdmin } from "../services/mailService.js"
 import { User, Order } from "../models/index.js"
 import jwt from "jsonwebtoken"
 
@@ -82,14 +82,35 @@ export const handleMail = async (req, res) => {
       message
     })
 
-    await sendMail({ name, businessName, phone, subscriptionType, message })
+    // 5. Send Emails
+    const orderDetails = {
+      name,
+      businessName,
+      phone,
+      subscriptionType,
+      message,
+      email: email || currentUser?.email
+    }
+
+    try {
+      if (orderDetails.email) {
+        await sendOrderConfirmationEmail(orderDetails.email, orderDetails)
+      }
+      await sendOrderNotificationToAdmin(orderDetails)
+    } catch (emailError) {
+      console.error("Order email error:", emailError)
+    }
+
+    // Keep the old sendMail lead notification if desired, or just use the new one.
+    // The new one (sendOrderNotificationToAdmin) is more detailed.
+    // await sendMail({ name, businessName, phone, subscriptionType, message })
 
     res.json({
       success: true,
       message: isNewUser
         ? "Order placed! Check your email for login link."
         : "Order placed successfully!",
-      user: null // Don't return user/token to frontend for security unless they actually logged in
+      user: null
     })
   } catch (error) {
     console.error("Mail error:", error)

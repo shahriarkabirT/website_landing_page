@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { CreditCard, Lock, ShieldCheck, CheckCircle } from "lucide-react"
+import { useAuth } from "@/context/AuthContext"
 
 function CheckoutContent() {
     const searchParams = useSearchParams()
@@ -24,6 +25,14 @@ function CheckoutContent() {
     const [cvc, setCvc] = useState("")
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
+    const { user } = useAuth()
+
+    useEffect(() => {
+        if (user) {
+            setName(prev => prev || user.name || "")
+            setEmail(prev => prev || user.email || "")
+        }
+    }, [user])
 
     const handleCheckout = async (e: React.FormEvent) => {
         e.preventDefault()

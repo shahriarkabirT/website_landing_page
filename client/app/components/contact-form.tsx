@@ -61,6 +61,7 @@ export default function ContactForm() {
         ...prev,
         name: user.name || "",
         email: user.email || "",
+        phone: user.phone || "",
       }))
     }
   }, [user])

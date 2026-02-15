@@ -1,6 +1,6 @@
 import crypto from "crypto"
 import { User, Order } from "../models/index.js"
-import { sendMagicLinkEmail } from "../services/mailService.js"
+import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendOrderNotificationToAdmin } from "../services/mailService.js"
 
 // @desc    Process Checkout & Auto-provision User
 // @route   POST /api/payment/checkout
@@ -24,16 +24,10 @@ export const processCheckout = async (req, res) => {
 
         // 2. Check User (Only if logged in)
         let user = req.user || null
+        let magicLinkToken = null
 
-        // OLD LOGIC: Auto-create user. 
         // NEW LOGIC: Treat as guest if not logged in (user remains null)
-
-        /* 
-        let magicLinkToken = null 
-        if (email && !user) {
-             // ... Code removed to enforce Guest Mode ...
-        } 
-        */
+        // If we ever want to auto-create users again, we'd set magicLinkToken here
 
         // 4. Create Order
         const order = await Order.create({
@@ -50,18 +44,33 @@ export const processCheckout = async (req, res) => {
             paymentMethod: transactionId ? "Manual" : "Card"
         })
 
-        // 5. Send Email (Only if email is provided and user was created/found)
-        if (email && user && magicLinkToken) {
-            try {
-                const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000"
-                const verificationUrl = `${frontendUrl}/verify-magic-link?token=${magicLinkToken}&email=${user.email}`
+        // 5. Send Emails
+        if (email) {
+            const orderDetails = {
+                name,
+                email,
+                phone: phone || "Not Provided",
+                businessName,
+                subscriptionType: subscriptionType || planName || "Standard",
+                transactionId,
+                message
+            }
 
-                // You might want a specific "Welcome + Magic Link" email template here
-                // Reusing standard magic link service for now
-                await sendMagicLinkEmail(user.email, verificationUrl)
+            try {
+                // To Customer
+                await sendOrderConfirmationEmail(email, orderDetails)
+
+                // To Admin
+                await sendOrderNotificationToAdmin(orderDetails)
+
+                // Magic Link (if guest account was ever created)
+                if (user && magicLinkToken) {
+                    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000"
+                    const verificationUrl = `${frontendUrl}/verify-magic-link?token=${magicLinkToken}&email=${user.email}`
+                    await sendMagicLinkEmail(user.email, verificationUrl)
+                }
             } catch (emailError) {
-                console.error("Failed to send email:", emailError)
-                // Continue without failing the request
+                console.error("Failed to send emails:", emailError)
             }
         }
 

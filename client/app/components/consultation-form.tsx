@@ -6,9 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Sparkles, Send, Loader2, MapPin, Phone, User, Mail } from "lucide-react"
+import { useAuth } from "@/context/AuthContext"
+import { useEffect } from "react"
 
 
 export default function ConsultationForm() {
+    const { user } = useAuth()
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({
         name: "",
@@ -16,6 +19,17 @@ export default function ConsultationForm() {
         email: "",
         address: "",
     })
+
+    useEffect(() => {
+        if (user) {
+            setForm(prev => ({
+                ...prev,
+                name: user.name || "",
+                phone: user.phone || "",
+                email: user.email || "",
+            }))
+        }
+    }, [user])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
