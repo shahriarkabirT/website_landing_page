@@ -22,7 +22,7 @@ export const blogPosts: BlogPost[] = [
         date: "১০ ফেব্রুয়ারি, ২০২৬",
         readTime: "১২ মিনিট",
         author: "শাহরিয়ার কবির",
-        image: "/blog/start-business.jpg",
+        image: "/blog1.jpg",
         category: "উদ্যোক্তা গাইড",
         content: `
             <p class="lead text-xl font-medium text-slate-700 dark:text-slate-300 mb-8 border-l-4 border-blue-600 pl-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-r-lg">
@@ -96,7 +96,7 @@ export const blogPosts: BlogPost[] = [
         date: "৮ ফেব্রুয়ারি, ২০২৬",
         readTime: "১০ মিনিট",
         author: "টেক এনালিস্ট",
-        image: "/blog/cost-analysis.jpg",
+        image: "/blog2.jpg",
         category: "ফিন্যান্সিয়াল গাইড",
         content: `
             <p class="lead text-xl font-medium text-slate-700 dark:text-slate-300 mb-8">
@@ -200,7 +200,7 @@ export const blogPosts: BlogPost[] = [
         date: "১২ ফেব্রুয়ারি, ২০২৬",
         readTime: "১৫ মিনিট",
         author: "হেড অফ মার্কেটিং",
-        image: "/blog/digital-marketing-pro.jpg",
+        image: "/blog3.jpg",
         category: "মার্কেটিং মাস্টারক্লাস",
         content: `
             <p class="lead text-xl font-medium text-slate-700 dark:text-slate-300 mb-8">

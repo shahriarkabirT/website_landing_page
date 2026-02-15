@@ -94,16 +94,14 @@ export default async function BlogPostPage({ params }: Props) {
                     </header>
 
                     {/* Featured Image */}
-                    {/* 
                     <div className="relative w-full h-[300px] md:h-[500px] rounded-2xl overflow-hidden mb-12 shadow-xl">
-                        <Image 
-                            src={post.image} 
-                            alt={post.title} 
-                            fill 
-                            className="object-cover" 
+                        <Image
+                            src={post.image}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
                         />
                     </div>
-                    */}
 
                     {/* Content */}
                     <div className="prose prose-lg dark:prose-invert max-w-none prose-slate font-bangla prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:leading-loose">
