@@ -59,3 +59,17 @@ export const orderLimiter = rateLimit({
         message: 'Order limit reached. Please try again after an hour or contact support if you need assistance.',
     },
 })
+/**
+ * Session rate limiter: 50 requests per 15 minutes per IP.
+ * Used for non-sensitive utility endpoints like profile checks and OAuth redirects.
+ */
+export const sessionLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 50,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: {
+        success: false,
+        message: 'Too many session requests, please try again later.',
+    },
+})

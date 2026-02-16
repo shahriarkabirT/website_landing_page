@@ -14,7 +14,7 @@ import paymentRoutes from "./routes/paymentRoutes.js"
 import consultationRoutes from "./routes/consultationRoutes.js"
 import demoRoutes from "./routes/demoRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
-import { globalLimiter, authLimiter, consultationLimiter, orderLimiter } from "./middleware/rateLimiter.js"
+import { globalLimiter, consultationLimiter, orderLimiter, sessionLimiter } from "./middleware/rateLimiter.js"
 import { User, Plan } from "./models/index.js"
 import path from "path"
 
@@ -74,7 +74,7 @@ app.use(globalLimiter) // Apply global rate limit to all routes
 
 app.use("/api/mail", mailRoutes)
 app.use("/api/admin", adminRoutes)
-app.use("/api/auth", authLimiter, authRoutes) // Strict auth limiter
+app.use("/api/auth", sessionLimiter, authRoutes) // Default session limiter for auth
 app.use("/api/user", userRoutes)
 app.use("/api/payment", orderLimiter, paymentRoutes) // Protect checkout
 app.use("/api/consultation", consultationLimiter, consultationRoutes) // Spam prevention

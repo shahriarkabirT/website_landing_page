@@ -12,18 +12,20 @@ import {
 } from "../controllers/authController.js"
 import { protect } from "../middleware/authMiddleware.js"
 
+import { authLimiter } from "../middleware/rateLimiter.js"
+
 const router = express.Router()
 
 // Standard Auth
-router.post("/register", registerUser)
-router.post("/login", authUser)
+router.post("/register", authLimiter, registerUser)
+router.post("/login", authLimiter, authUser)
 router.post("/logout", logoutUser)
 router.post("/refresh", refreshToken)
 router.get("/profile", protect, getUserProfile)
 
 // Magic Link
-router.post("/magic-link", sendMagicLink)
-router.post("/verify-magic-link", verifyMagicLink)
+router.post("/magic-link", authLimiter, sendMagicLink)
+router.post("/verify-magic-link", authLimiter, verifyMagicLink)
 
 // Google OAuth
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }))
