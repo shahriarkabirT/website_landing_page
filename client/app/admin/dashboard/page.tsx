@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, CreditCard, LogOut, Package, Loader2, MessageSquare, User, Calendar, CheckSquare, Layers, Plus, Trash2, Edit, Eye } from "lucide-react"
+import { LayoutDashboard, CreditCard, LogOut, Package, Loader2, MessageSquare, User, Calendar, CheckSquare, Layers, Plus, Trash2, Edit, Eye, Archive, RotateCcw } from "lucide-react"
 import AdminSidebar from "../../components/admin/admin-sidebar"
 import PricingManager from "../../components/admin/pricing-manager"
 import { useAuth } from "@/context/AuthContext"
@@ -35,6 +35,7 @@ export default function DashboardPage() {
     const [demos, setDemos] = useState([])
     const [view, setView] = useState("orders") // "orders", "consultations", "demos"
     const [fetching, setFetching] = useState(true)
+    const [showArchived, setShowArchived] = useState(false)
 
     // Demo Form State
     const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false)
@@ -52,7 +53,7 @@ export default function DashboardPage() {
     const fetchData = async () => {
         try {
             const [orderRes, consultRes, demoRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/orders`, { credentials: "include" }),
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/orders?archived=${showArchived}`, { credentials: "include" }),
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/consultation`, { credentials: "include" }),
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demo/admin`, { credentials: "include" })
             ])
@@ -80,7 +81,7 @@ export default function DashboardPage() {
             }
             fetchData()
         }
-    }, [user, loading, router, logout])
+    }, [user, loading, router, logout, showArchived])
 
     const handleUpdateStatus = async (id: string, newStatus: string, type: "orders" | "consultations") => {
         try {
@@ -105,6 +106,24 @@ export default function DashboardPage() {
             }
         } catch (error) {
             toast.error("Error updating status")
+        }
+    }
+
+    const handleToggleArchive = async (id: string, currentlyActive: boolean) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/orders/${id}/archive`, {
+                method: "PUT",
+                credentials: "include"
+            })
+
+            if (res.ok) {
+                toast.success(`Order ${currentlyActive ? 'archived' : 'restored'}`)
+                fetchData()
+            } else {
+                toast.error("Failed to archive order")
+            }
+        } catch (error) {
+            toast.error("Error archiving order")
         }
     }
 
@@ -228,6 +247,16 @@ export default function DashboardPage() {
                                 <span className="px-4 py-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-sm font-medium">
                                     Total {view === "orders" ? `Orders: ${orders.length}` : view === "consultations" ? `Requests: ${consultations.length}` : `Demos: ${demos.length}`}
                                 </span>
+                                {view === "orders" && (
+                                    <Button
+                                        variant={showArchived ? "default" : "outline"}
+                                        onClick={() => setShowArchived(!showArchived)}
+                                        className={`rounded-xl gap-2 font-bold ${showArchived ? 'bg-orange-600 hover:bg-orange-700' : ''}`}
+                                    >
+                                        <Archive className="w-4 h-4" />
+                                        {showArchived ? "Show Active" : "Archive"}
+                                    </Button>
+                                )}
                                 {view === "demos" && (
                                     <Button onClick={() => {
                                         setEditingDemoId(null)
@@ -359,6 +388,39 @@ export default function DashboardPage() {
                                                         </SelectContent>
                                                     </Select>
                                                 </td>
+                                                <td className="px-6 py-4 align-top text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <Button
+                                                            size="icon"
+                                                            variant="ghost"
+                                                            onClick={() => {
+                                                                setSelectedOrder(order)
+                                                                setIsOrderDetailsOpen(true)
+                                                            }}
+                                                        >
+                                                            <Eye className="w-4 h-4 text-slate-600" />
+                                                        </Button>
+                                                        {showArchived ? (
+                                                            <Button
+                                                                size="icon"
+                                                                variant="ghost"
+                                                                onClick={() => handleToggleArchive(order._id, false)}
+                                                                title="Restore Order"
+                                                            >
+                                                                <RotateCcw className="w-4 h-4 text-green-600" />
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                size="icon"
+                                                                variant="ghost"
+                                                                onClick={() => handleToggleArchive(order._id, true)}
+                                                                title="Archive Order"
+                                                            >
+                                                                <Trash2 className="w-4 h-4 text-red-600" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -427,10 +489,11 @@ export default function DashboardPage() {
                             )}
                         </div>
                     </>
-                )}
-            </main>
+                )
+                }
+            </main >
             {/* Demo Dialog */}
-            <Dialog open={isDemoDialogOpen} onOpenChange={setIsDemoDialogOpen}>
+            < Dialog open={isDemoDialogOpen} onOpenChange={setIsDemoDialogOpen} >
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{editingDemoId ? "Edit Demo" : "Add New Demo"}</DialogTitle>
@@ -488,10 +551,10 @@ export default function DashboardPage() {
                         <Button onClick={handleSaveDemo}>Save Demo</Button>
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
+            </Dialog >
 
             {/* Order Details Dialog */}
-            <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
+            < Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen} >
                 <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Order Details</DialogTitle>
@@ -604,7 +667,7 @@ export default function DashboardPage() {
                         <Button onClick={() => setIsOrderDetailsOpen(false)}>Close</Button>
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
-        </div>
+            </Dialog >
+        </div >
     )
 }

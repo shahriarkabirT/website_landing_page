@@ -49,7 +49,8 @@ const orderSchema = new mongoose.Schema({
     subscriptionType: { type: String, required: true },
     message: { type: String },
     transactionId: { type: String },
-    status: { type: String, default: 'pending', enum: ['pending', 'completed', 'canceled'] }
+    status: { type: String, default: 'pending', enum: ['pending', 'completed', 'canceled'] },
+    isActive: { type: Boolean, default: true }
 }, { timestamps: true })
 
 const consultationSchema = new mongoose.Schema({
