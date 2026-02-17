@@ -29,12 +29,12 @@ export const getAllDemos = async (req, res) => {
 // @access  Private/Admin
 export const createDemo = async (req, res) => {
     try {
-        const { title, description, imageUrl, order, isVisible } = req.body
+        const { title, description, imageUrls, order, isVisible } = req.body
 
         const demo = await Demo.create({
             title,
             description,
-            imageUrl,
+            imageUrls,
             order,
             isVisible
         })
@@ -50,14 +50,14 @@ export const createDemo = async (req, res) => {
 // @access  Private/Admin
 export const updateDemo = async (req, res) => {
     try {
-        const { title, description, imageUrl, order, isVisible } = req.body
+        const { title, description, imageUrls, order, isVisible } = req.body
 
         const demo = await Demo.findById(req.params.id)
 
         if (demo) {
             demo.title = title || demo.title
             demo.description = description || demo.description
-            demo.imageUrl = imageUrl || demo.imageUrl
+            demo.imageUrls = imageUrls || demo.imageUrls
             if (order !== undefined) demo.order = order
             if (isVisible !== undefined) demo.isVisible = isVisible
 

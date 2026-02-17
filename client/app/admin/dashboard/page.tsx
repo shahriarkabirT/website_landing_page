@@ -39,7 +39,7 @@ export default function DashboardPage() {
 
     // Demo Form State
     const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false)
-    const [demoForm, setDemoForm] = useState({ title: "", description: "", imageUrl: "", order: 0 })
+    const [demoForm, setDemoForm] = useState<{ title: string; description: string; imageUrls: string[]; order: number }>({ title: "", description: "", imageUrls: [], order: 0 })
     const [editingDemoId, setEditingDemoId] = useState<string | null>(null)
     const [uploading, setUploading] = useState(false)
 
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                 toast.success(`Demo ${editingDemoId ? 'updated' : 'created'}`)
                 setIsDemoDialogOpen(false)
                 setEditingDemoId(null)
-                setDemoForm({ title: "", description: "", imageUrl: "", order: 0 })
+                setDemoForm({ title: "", description: "", imageUrls: [], order: 0 })
                 fetchData()
             } else {
                 toast.error("Failed to save demo")
@@ -176,27 +176,34 @@ export default function DashboardPage() {
     }
 
     const uploadFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
+        const files = e.target.files
+        if (!files || files.length === 0) return
 
-        const formData = new FormData()
-        formData.append("image", file)
         setUploading(true)
+        const uploadedUrls: string[] = []
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`, {
-                method: "POST",
-                body: formData,
-            })
-            const data = await res.json()
-            // Save only the relative path
-            setDemoForm({ ...demoForm, imageUrl: data.image })
-            setUploading(false)
-            toast.success("Image uploaded")
+            for (let i = 0; i < files.length; i++) {
+                const formData = new FormData()
+                formData.append("image", files[i])
+
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`, {
+                    method: "POST",
+                    body: formData,
+                })
+                const data = await res.json()
+                if (data.image) {
+                    uploadedUrls.push(data.image)
+                }
+            }
+
+            setDemoForm({ ...demoForm, imageUrls: [...demoForm.imageUrls, ...uploadedUrls] })
+            toast.success(`${uploadedUrls.length} image(s) uploaded`)
         } catch (error) {
             console.error(error)
-            setUploading(false)
             toast.error("Image upload failed")
+        } finally {
+            setUploading(false)
         }
     }
 
@@ -205,7 +212,7 @@ export default function DashboardPage() {
         setDemoForm({
             title: demo.title,
             description: demo.description,
-            imageUrl: demo.imageUrl,
+            imageUrls: demo.imageUrls || [],
             order: demo.order
         })
         setIsDemoDialogOpen(true)
@@ -215,7 +222,8 @@ export default function DashboardPage() {
     const getImageUrl = (url: string) => {
         if (!url) return ""
         if (url.startsWith("http")) return url
-        return `${process.env.NEXT_PUBLIC_BACKEND_URL}${url}`
+        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        return `${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}${url.startsWith('/') ? url : '/' + url}`;
     }
 
     if (loading || (fetching && user?.role === "admin")) {
@@ -260,7 +268,7 @@ export default function DashboardPage() {
                                 {view === "demos" && (
                                     <Button onClick={() => {
                                         setEditingDemoId(null)
-                                        setDemoForm({ title: "", description: "", imageUrl: "", order: 0 })
+                                        setDemoForm({ title: "", description: "", imageUrls: [], order: 0 })
                                         setIsDemoDialogOpen(true)
                                     }} className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl gap-2">
                                         <Plus className="w-4 h-4" /> Add Demo
@@ -285,7 +293,7 @@ export default function DashboardPage() {
                                             <tr key={demo._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all">
                                                 <td className="px-6 py-4">
                                                     <div className="w-16 h-20 bg-slate-100 rounded-lg overflow-hidden relative">
-                                                        <img src={getImageUrl(demo.imageUrl)} alt="" className="object-cover w-full h-full" />
+                                                        <img src={getImageUrl(demo.imageUrls?.[0])} alt="" className="object-cover w-full h-full" />
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -329,7 +337,7 @@ export default function DashboardPage() {
                                                     {order.templateId ? (
                                                         <div className="flex items-start gap-3 w-48">
                                                             <div className="w-12 h-16 bg-slate-100 rounded-md overflow-hidden relative flex-shrink-0 border">
-                                                                <img src={getImageUrl(order.templateId.imageUrl)} alt="" className="object-cover w-full h-full" />
+                                                                <img src={getImageUrl(order.templateId.imageUrls?.[0])} alt="" className="object-cover w-full h-full" />
                                                             </div>
                                                             <div>
                                                                 <p className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2">{order.templateId.title}</p>
@@ -494,7 +502,7 @@ export default function DashboardPage() {
             </main >
             {/* Demo Dialog */}
             < Dialog open={isDemoDialogOpen} onOpenChange={setIsDemoDialogOpen} >
-                <DialogContent>
+                <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>{editingDemoId ? "Edit Demo" : "Add New Demo"}</DialogTitle>
                         <DialogDescription>
@@ -519,24 +527,37 @@ export default function DashboardPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Image</Label>
-                            <Input
-                                type="file"
-                                onChange={uploadFileHandler}
-                            />
-                            {uploading && <Loader2 className="animate-spin w-4 h-4 text-blue-600" />}
-                            {demoForm.imageUrl && (
-                                <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden border">
-                                    <img src={getImageUrl(demoForm.imageUrl)} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                            )}
-                            {/* Hidden input to store URL if manually edited (optional) */}
-                            {/* <Input
-                                value={demoForm.imageUrl}
-                                onChange={(e) => setDemoForm({ ...demoForm, imageUrl: e.target.value })}
-                                placeholder="/images/..."
-                                className="hidden"
-                            /> */}
+                            <Label>Images</Label>
+                            <div className="grid grid-cols-3 gap-2 mt-2">
+                                {demoForm.imageUrls.map((url, idx) => (
+                                    <div key={idx} className="relative aspect-[3/4] rounded-md overflow-hidden border group">
+                                        <img src={getImageUrl(url)} alt="Preview" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newUrls = [...demoForm.imageUrls];
+                                                newUrls.splice(idx, 1);
+                                                setDemoForm({ ...demoForm, imageUrls: newUrls });
+                                            }}
+                                            className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <label className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-md aspect-[3/4] flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors">
+                                    <Plus className="w-6 h-6 text-slate-400" />
+                                    <span className="text-[10px] text-slate-400 mt-1">Add</span>
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        onChange={uploadFileHandler}
+                                        disabled={uploading}
+                                        multiple
+                                    />
+                                </label>
+                            </div>
+                            {uploading && <div className="flex items-center gap-2 text-xs text-blue-600 mt-2"><Loader2 className="animate-spin w-3 h-3" /> Uploading...</div>}
                         </div>
                         <div className="space-y-2">
                             <Label>Order</Label>
@@ -571,7 +592,7 @@ export default function DashboardPage() {
                                     <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-slate-900">
                                         <div className="aspect-[3/4] relative">
                                             <img
-                                                src={getImageUrl(selectedOrder.templateId.imageUrl)}
+                                                src={getImageUrl(selectedOrder.templateId.imageUrls?.[0])}
                                                 alt={selectedOrder.templateId.title}
                                                 className="object-cover w-full h-full"
                                             />
