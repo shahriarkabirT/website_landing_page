@@ -293,7 +293,7 @@ export default function DashboardPage() {
                                             <tr key={demo._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all">
                                                 <td className="px-6 py-4">
                                                     <div className="w-16 h-20 bg-slate-100 rounded-lg overflow-hidden relative">
-                                                        <img src={getImageUrl(demo.imageUrls?.[0])} alt="" className="object-cover w-full h-full" />
+                                                        <img src={getImageUrl(demo.imageUrls?.[0] || (demo as any).imageUrl)} alt="" className="object-cover w-full h-full" />
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                                                     {order.templateId ? (
                                                         <div className="flex items-start gap-3 w-48">
                                                             <div className="w-12 h-16 bg-slate-100 rounded-md overflow-hidden relative flex-shrink-0 border">
-                                                                <img src={getImageUrl(order.templateId.imageUrls?.[0])} alt="" className="object-cover w-full h-full" />
+                                                                <img src={getImageUrl(order.templateId.imageUrls?.[0] || (order.templateId as any).imageUrl)} alt="" className="object-cover w-full h-full" />
                                                             </div>
                                                             <div>
                                                                 <p className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2">{order.templateId.title}</p>
@@ -592,7 +592,7 @@ export default function DashboardPage() {
                                     <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-slate-900">
                                         <div className="aspect-[3/4] relative">
                                             <img
-                                                src={getImageUrl(selectedOrder.templateId.imageUrls?.[0])}
+                                                src={getImageUrl(selectedOrder.templateId.imageUrls?.[0] || (selectedOrder.templateId as any).imageUrl)}
                                                 alt={selectedOrder.templateId.title}
                                                 className="object-cover w-full h-full"
                                             />

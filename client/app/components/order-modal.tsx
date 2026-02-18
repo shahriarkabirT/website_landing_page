@@ -13,7 +13,7 @@ import { useAuth } from "@/context/AuthContext"
 interface Demo {
     _id: string
     title: string
-    imageUrl: string
+    imageUrls: string[]
 }
 
 interface OrderModalProps {
@@ -178,7 +178,7 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                                         >
                                             <div className="aspect-[3/4] relative bg-slate-100">
                                                 <Image
-                                                    src={getImageUrl(demo.imageUrl)}
+                                                    src={getImageUrl(demo.imageUrls?.[0])}
                                                     alt={demo.title}
                                                     fill
                                                     className="object-cover object-top"
