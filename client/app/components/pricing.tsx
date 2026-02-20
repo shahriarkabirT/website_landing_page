@@ -94,16 +94,16 @@ export default function Pricing() {
   return (
     <>
       <section
-        className="py-12 md:py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 relative overflow-hidden"
+        className="py-4 md:py-10 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 relative overflow-hidden"
         id="pricing"
       >
         {bgElement}
         <div className="mx-auto max-w-6xl lg:max-w-6xl 2xl:max-w-7xl px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-2">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
               Pricing and Subscriptions
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
               Choose the plan that fits your business needs. No hidden charges.
             </p>
           </div>

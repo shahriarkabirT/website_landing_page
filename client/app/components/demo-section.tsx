@@ -85,20 +85,20 @@ export default function DemoSection() {
 
     if (loading) {
         return (
-            <section id="demos" className="py-24 flex justify-center bg-slate-50 dark:bg-slate-900/50">
+            <section id="demos" className="py-10 flex justify-center bg-slate-50 dark:bg-slate-900/50">
                 <Loader2 className="animate-spin w-8 h-8 text-slate-400" />
             </section>
         )
     }
 
     return (
-        <section id="demos" className="py-12 md:py-24 bg-slate-50 dark:bg-slate-900/50">
+        <section id="demos" className="py-6 md:py-10 bg-slate-50 dark:bg-slate-900/50">
             <div className="container px-4 md:px-6 mx-auto">
                 <div className="max-w-4xl mx-auto text-center mb-12">
-                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-4xl">
                         টেমপ্লেট দেখুন
                     </h2>
-                    <p className="mt-4 text-xl text-muted-foreground">
+                    <p className="mt-4 text-sm text-muted-foreground">
                         আপনার প্রকল্পের জন্য প্রিমিয়াম টেমপ্লেট দেখুন এবং সিলেক্ট করুন।
                     </p>
                 </div>
