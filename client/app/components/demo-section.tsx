@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn, ZoomOut, ArrowRight, Loader2 } from "lucide-react";
+import { X, ZoomIn, ZoomOut, ArrowRight, Loader2, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
@@ -19,6 +19,7 @@ interface Demo {
     title: string;
     description: string;
     imageUrls: string[];
+    link?: string;
 }
 
 export default function DemoSection() {
@@ -122,32 +123,56 @@ export default function DemoSection() {
                                             <motion.div
                                                 layoutId={`demo-card-${demo._id}`}
                                                 className={cn(
-                                                    "group relative bg-white dark:bg-slate-950 rounded-2xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 cursor-pointer flex flex-col transition-all duration-500 h-full",
-                                                    isActive ? "scale-100 opacity-100 ring-2 ring-blue-500/50 z-10" : "scale-90 opacity-60 z-0",
-                                                    "md:scale-100 md:opacity-100 md:ring-0 md:z-0",
-                                                    "hover:shadow-2xl hover:scale-[1.02] hover:opacity-100"
+                                                    "group relative bg-white dark:bg-slate-950 rounded-[1.5rem] overflow-hidden border border-slate-200 dark:border-slate-800 cursor-pointer flex flex-col transition-all duration-500",
+                                                    isActive ? "opacity-100 z-10" : "opacity-40 grayscale-[0.5] z-0",
+                                                    "md:opacity-100 md:grayscale-0",
+                                                    "hover:shadow-xl hover:border-blue-500/30 dark:hover:border-blue-500/30"
                                                 )}
                                                 onClick={() => setSelectedDemo(demo)}
                                             >
-                                                <div className="relative aspect-[3/4] overflow-hidden w-full">
+                                                {/* Image Container with Inner Shadow Effect */}
+                                                <div className="relative aspect-[3/4] overflow-hidden w-full bg-slate-100 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
                                                     <Image
                                                         src={getImageUrl(demo.imageUrls?.[0])}
                                                         alt={demo.title}
                                                         fill
                                                         unoptimized
-                                                        className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                                        className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.05]"
                                                     />
-                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
-                                                        <span className="bg-white/90 text-slate-900 px-4 py-2 rounded-full font-medium text-sm flex items-center shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                                                            View Demo <ArrowRight className="ml-2 w-4 h-4" />
-                                                        </span>
+
+                                                    {/* Internal Shadow Overlays for Depth */}
+                                                    <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.1)] pointer-events-none" />
+                                                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                                    {/* Professional Hover Indicator */}
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-95 group-hover:scale-100">
+                                                        <div className="px-5 py-2.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full shadow-2xl border border-white/20 flex items-center gap-2">
+                                                            <span className="text-xs font-bold text-slate-900 dark:text-white">টেমপ্লেট দেখুন</span>
+                                                            <ArrowRight className="w-3.5 h-3.5 text-blue-600" />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="p-6 mt-auto border-t border-slate-100 dark:border-slate-800">
-                                                    <h3 className="text-lg font-bold mb-1">{demo.title}</h3>
-                                                    <p className="text-sm text-muted-foreground line-clamp-2">
+
+                                                {/* Details Section */}
+                                                <div className="p-5 flex flex-col flex-1 bg-white dark:bg-slate-950">
+                                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-blue-600 transition-colors">
+                                                        {demo.title}
+                                                    </h3>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                                                         {demo.description}
                                                     </p>
+                                                    {demo.link && (
+                                                        <a
+                                                            href={demo.link}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                                        >
+                                                            <ExternalLink className="w-3.5 h-3.5" />
+                                                            Live Demo
+                                                        </a>
+                                                    )}
                                                 </div>
                                             </motion.div>
                                         </CarouselItem>

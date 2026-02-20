@@ -66,6 +66,7 @@ const demoSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     imageUrls: [{ type: String }],
+    link: { type: String, default: '' },
     order: { type: Number, default: 0 },
     isVisible: { type: Boolean, default: true }
 }, { timestamps: true })

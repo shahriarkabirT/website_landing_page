@@ -39,7 +39,7 @@ export default function DashboardPage() {
 
     // Demo Form State
     const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false)
-    const [demoForm, setDemoForm] = useState<{ title: string; description: string; imageUrls: string[]; order: number }>({ title: "", description: "", imageUrls: [], order: 0 })
+    const [demoForm, setDemoForm] = useState<{ title: string; description: string; imageUrls: string[]; link: string; order: number }>({ title: "", description: "", imageUrls: [], link: "", order: 0 })
     const [editingDemoId, setEditingDemoId] = useState<string | null>(null)
     const [uploading, setUploading] = useState(false)
 
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                 toast.success(`Demo ${editingDemoId ? 'updated' : 'created'}`)
                 setIsDemoDialogOpen(false)
                 setEditingDemoId(null)
-                setDemoForm({ title: "", description: "", imageUrls: [], order: 0 })
+                setDemoForm({ title: "", description: "", imageUrls: [], link: "", order: 0 })
                 fetchData()
             } else {
                 toast.error("Failed to save demo")
@@ -213,6 +213,7 @@ export default function DashboardPage() {
             title: demo.title,
             description: demo.description,
             imageUrls: demo.imageUrls || [],
+            link: demo.link || "",
             order: demo.order
         })
         setIsDemoDialogOpen(true)
@@ -268,7 +269,7 @@ export default function DashboardPage() {
                                 {view === "demos" && (
                                     <Button onClick={() => {
                                         setEditingDemoId(null)
-                                        setDemoForm({ title: "", description: "", imageUrls: [], order: 0 })
+                                        setDemoForm({ title: "", description: "", imageUrls: [], link: "", order: 0 })
                                         setIsDemoDialogOpen(true)
                                     }} className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl gap-2">
                                         <Plus className="w-4 h-4" /> Add Demo
@@ -558,6 +559,14 @@ export default function DashboardPage() {
                                 </label>
                             </div>
                             {uploading && <div className="flex items-center gap-2 text-xs text-blue-600 mt-2"><Loader2 className="animate-spin w-3 h-3" /> Uploading...</div>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Live Site Link</Label>
+                            <Input
+                                value={demoForm.link}
+                                onChange={(e) => setDemoForm({ ...demoForm, link: e.target.value })}
+                                placeholder="https://example.com"
+                            />
                         </div>
                         <div className="space-y-2">
                             <Label>Order</Label>
