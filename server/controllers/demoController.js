@@ -1,12 +1,26 @@
 import { Demo } from "../models/index.js"
 
-// @desc    Get all visible demos
+// @desc    Get all visible demos with pagination
 // @route   GET /api/demo
 // @access  Public
 export const getDemos = async (req, res) => {
     try {
-        const demos = await Demo.find({ isVisible: true }).sort({ order: 1, createdAt: -1 })
-        res.json(demos)
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12;
+        const skip = (page - 1) * limit;
+
+        const total = await Demo.countDocuments({ isVisible: true });
+        const demos = await Demo.find({ isVisible: true })
+            .sort({ order: 1, createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        res.json({
+            demos,
+            page,
+            pages: Math.ceil(total / limit),
+            total
+        });
     } catch (error) {
         res.status(500).json({ message: "Server Error" })
     }

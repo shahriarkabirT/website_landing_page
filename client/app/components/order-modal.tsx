@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Check, Loader2, Info, ArrowLeft, ArrowRight } from "lucide-react"
+import { Check, Loader2, Info, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import { toast } from "sonner"
 import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
@@ -36,6 +36,8 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
     const [loadingDemos, setLoadingDemos] = useState(true)
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
     const [submitting, setSubmitting] = useState(false)
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
 
     // Form State
     const [formData, setFormData] = useState({
@@ -51,7 +53,8 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
     useEffect(() => {
         if (isOpen) {
             setStep(1)
-            fetchDemos()
+            setPage(1)
+            fetchDemos(1)
             // Prioritize initialData, then user data, then empty
             setFormData(prev => ({
                 ...prev,
@@ -63,16 +66,28 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
         }
     }, [isOpen, initialData, user])
 
-    const fetchDemos = async () => {
+    const fetchDemos = async (pageToFetch: number) => {
+        setLoadingDemos(true)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demo`)
-            const data = await res.json()
-            setDemos(data)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demo?page=${pageToFetch}&limit=6`)
+            const result = await res.json()
+            if (Array.isArray(result.demos)) {
+                setDemos(result.demos)
+                setTotalPages(result.pages || 1)
+            } else if (Array.isArray(result)) {
+                setDemos(result)
+            }
         } catch (error) {
-            console.error("Failed to fetch demos")
+            console.error("Failed to fetch demos:", error)
         } finally {
             setLoadingDemos(false)
         }
+    }
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > totalPages) return
+        setPage(newPage)
+        fetchDemos(newPage)
     }
 
     const handleNext = () => {
@@ -138,12 +153,13 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
     const getImageUrl = (url: string) => {
         if (!url) return ""
         if (url.startsWith("http")) return url
-        return `${process.env.NEXT_PUBLIC_BACKEND_URL}${url}`
+        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+        return `${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}${url.startsWith('/') ? url : '/' + url}`;
     }
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 w-[95vw] rounded-xl">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 w-[95vw] rounded-xl border border-slate-200 dark:border-slate-800">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                     <div>
@@ -162,42 +178,71 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                 {/* Body */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-6">
                     {step === 1 && (
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {loadingDemos ? (
                                 <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600" /></div>
                             ) : (
-                                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                                    {demos.map((demo) => (
-                                        <div
-                                            key={demo._id}
-                                            onClick={() => setSelectedTemplate(demo._id)}
-                                            className={`cursor-pointer rounded-lg md:rounded-xl border-2 overflow-hidden transition-all relative group ${selectedTemplate === demo._id
-                                                ? "border-blue-600 ring-2 md:ring-4 ring-blue-600/10"
-                                                : "border-slate-200 dark:border-slate-800 hover:border-blue-400"
-                                                }`}
-                                        >
-                                            <div className="aspect-[3/4] relative bg-slate-100">
-                                                <Image
-                                                    src={getImageUrl(demo.imageUrls?.[0])}
-                                                    alt={demo.title}
-                                                    fill
-                                                    className="object-cover object-top"
-                                                    unoptimized
-                                                />
-                                                {selectedTemplate === demo._id && (
-                                                    <div className="absolute inset-0 bg-blue-600/20 flex items-center justify-center">
-                                                        <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg">
-                                                            <Check className="w-6 h-6" />
+                                <>
+                                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                                        {demos.map((demo) => (
+                                            <div
+                                                key={demo._id}
+                                                onClick={() => setSelectedTemplate(demo._id)}
+                                                className={`cursor-pointer rounded-lg md:rounded-xl border-2 overflow-hidden transition-all relative group ${selectedTemplate === demo._id
+                                                    ? "border-blue-600 ring-2 md:ring-4 ring-blue-600/10"
+                                                    : "border-slate-200 dark:border-slate-800 hover:border-blue-400"
+                                                    }`}
+                                            >
+                                                <div className="aspect-[3/4] relative bg-slate-100">
+                                                    <Image
+                                                        src={getImageUrl(demo.imageUrls?.[0])}
+                                                        alt={demo.title}
+                                                        fill
+                                                        className="object-cover object-top"
+                                                        unoptimized
+                                                    />
+                                                    {selectedTemplate === demo._id && (
+                                                        <div className="absolute inset-0 bg-blue-600/20 flex items-center justify-center">
+                                                            <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg">
+                                                                <Check className="w-6 h-6" />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    )}
+                                                </div>
+                                                <div className="p-2 md:p-3 bg-white dark:bg-slate-950">
+                                                    <p className="font-bold text-xs md:text-sm truncate">{demo.title}</p>
+                                                </div>
                                             </div>
-                                            <div className="p-2 md:p-3 bg-white dark:bg-slate-950">
-                                                <p className="font-bold text-xs md:text-sm truncate">{demo.title}</p>
+                                        ))}
+                                    </div>
+
+                                    {/* Pagination UI for Templates */}
+                                    {totalPages > 1 && (
+                                        <div className="flex items-center justify-center gap-4 mt-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handlePageChange(page - 1)}
+                                                disabled={page === 1}
+                                                className="rounded-full gap-2"
+                                            >
+                                                <ChevronLeft className="w-4 h-4" /> আগের গুলো
+                                            </Button>
+                                            <div className="text-sm font-bold text-slate-500">
+                                                ধাপ {page} / {totalPages}
                                             </div>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handlePageChange(page + 1)}
+                                                disabled={page === totalPages}
+                                                className="rounded-full gap-2"
+                                            >
+                                                পরের গুলো <ChevronRight className="w-4 h-4" />
+                                            </Button>
                                         </div>
-                                    ))}
-                                </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}

@@ -41,12 +41,17 @@ export default function ContactForm() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/plans`)
         const data = await res.json()
-        setPlans(data)
-        if (data.length > 0) {
-          setForm(prev => ({ ...prev, subscriptionType: data[0].name }))
+        if (Array.isArray(data)) {
+          setPlans(data)
+          if (data.length > 0) {
+            setForm(prev => ({ ...prev, subscriptionType: data[0].name }))
+          }
+        } else {
+          setPlans([])
         }
       } catch (err) {
         console.error("Failed to fetch plans", err)
+        setPlans([])
       } finally {
         setLoadingPlans(false)
       }
@@ -87,7 +92,7 @@ export default function ContactForm() {
     setIsModalOpen(true)
   }
 
-  const selectedPlan = plans.find(p => p.name === form.subscriptionType)
+  const selectedPlan = Array.isArray(plans) ? plans.find(p => p.name === form.subscriptionType) : null
   const planPrice = selectedPlan ? `${selectedPlan.price} ${selectedPlan.period}` : "Custom Price"
 
   return (
