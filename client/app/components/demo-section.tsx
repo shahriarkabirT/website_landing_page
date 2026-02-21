@@ -212,7 +212,7 @@ export default function DemoSection() {
                     >
                         {/* Close Button */}
                         <button
-                            className="absolute top-6 right-6 z-[60] p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"
+                            className="absolute top-6 right-6 z-[60] p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all backdrop-blur-md border border-white/20 shadow-xl"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 if (isZoomed) {
@@ -278,8 +278,8 @@ export default function DemoSection() {
 
                                     {(selectedDemo.imageUrls?.length || 0) > 1 && (
                                         <>
-                                            <CarouselPrevious className="absolute left-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md" />
-                                            <CarouselNext className="absolute right-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md" />
+                                            <CarouselPrevious className="absolute left-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-black/50 hover:bg-black/70 text-white border-white/20 backdrop-blur-md shadow-xl" />
+                                            <CarouselNext className="absolute right-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-black/50 hover:bg-black/70 text-white border-white/20 backdrop-blur-md shadow-xl" />
                                         </>
                                     )}
                                 </Carousel>
