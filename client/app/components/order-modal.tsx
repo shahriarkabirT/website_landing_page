@@ -21,6 +21,7 @@ interface OrderModalProps {
     planPrice: string
     isOpen: boolean
     onClose: () => void
+    initialTemplateId?: string | null
     initialData?: {
         name?: string
         phone?: string
@@ -30,7 +31,7 @@ interface OrderModalProps {
     }
 }
 
-export default function OrderModal({ planName, planPrice, isOpen, onClose, initialData }: OrderModalProps) {
+export default function OrderModal({ planName, planPrice, isOpen, onClose, initialData, initialTemplateId }: OrderModalProps) {
     const [step, setStep] = useState(1) // 1: Template, 2: Details, 3: Payment
     const [demos, setDemos] = useState<Demo[]>([])
     const [loadingDemos, setLoadingDemos] = useState(true)
@@ -52,9 +53,15 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
 
     useEffect(() => {
         if (isOpen) {
-            setStep(1)
-            setPage(1)
-            fetchDemos(1)
+            if (initialTemplateId) {
+                setStep(2)
+                setSelectedTemplate(initialTemplateId)
+            } else {
+                setStep(1)
+                setPage(1)
+                fetchDemos(1)
+            }
+
             // Prioritize initialData, then user data, then empty
             setFormData(prev => ({
                 ...prev,
@@ -64,7 +71,7 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                 businessName: initialData?.businessName || "",
             }))
         }
-    }, [isOpen, initialData, user])
+    }, [isOpen, initialData, user, initialTemplateId])
 
     const fetchDemos = async (pageToFetch: number) => {
         setLoadingDemos(true)
@@ -159,58 +166,64 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 w-[95vw] rounded-xl border border-slate-200 dark:border-slate-800">
+            <DialogContent className="sm:max-w-[1400px] w-[95vw] max-h-[96vh] md:max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl">
                 {/* Header */}
-                <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                <div className="p-4 md:p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
                     <div>
-                        <h2 className="text-lg md:text-xl font-bold font-bangla text-slate-900 dark:text-white">
-                            {step === 1 ? "টেমপ্লেট নির্বাচন করুন" : step === 2 ? "আপনার তথ্য দিন" : "পেমেন্ট সম্পন্ন করুন"}
+                        <h2 className="text-lg md:text-2xl font-black font-bangla text-slate-900 dark:text-white">
+                            {step === 1 ? "পছন্দের টেমপ্লেট" : step === 2 ? "আপনার তথ্য" : "পেমেন্ট সম্পন্ন করুন"}
                         </h2>
-                        <p className="text-xs md:text-sm text-slate-500 font-bangla">
-                            ধাপ {step} / ৩
+                        <p className="text-[10px] md:text-sm text-slate-400 font-bold uppercase tracking-widest mt-0.5 md:mt-1">
+                            Step {step} of 3
                         </p>
                     </div>
-                    <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 px-3 py-1 rounded-full text-sm font-bold">
-                        {planName} - {planPrice}
+                    <div className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 px-3 md:px-4 py-1.5 md:py-2 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-black border border-indigo-100 dark:border-indigo-800/50">
+                        {planName}
                     </div>
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50/30 dark:bg-slate-900/30">
                     {step === 1 && (
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             {loadingDemos ? (
-                                <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600" /></div>
+                                <div className="flex flex-col items-center justify-center py-32 gap-4">
+                                    <Loader2 className="animate-spin w-10 h-10 text-indigo-600" />
+                                    <p className="text-slate-400 font-bold animate-pulse">টেমপ্লেটগুলো লোড হচ্ছে...</p>
+                                </div>
                             ) : (
                                 <>
-                                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                                         {demos.map((demo) => (
                                             <div
                                                 key={demo._id}
                                                 onClick={() => setSelectedTemplate(demo._id)}
-                                                className={`cursor-pointer rounded-lg md:rounded-xl border-2 overflow-hidden transition-all relative group ${selectedTemplate === demo._id
-                                                    ? "border-blue-600 ring-2 md:ring-4 ring-blue-600/10"
-                                                    : "border-slate-200 dark:border-slate-800 hover:border-blue-400"
+                                                className={`group cursor-pointer rounded-2xl border-2 overflow-hidden transition-all relative aspect-[3/4] bg-white dark:bg-slate-950 ${selectedTemplate === demo._id
+                                                    ? "border-indigo-600 ring-4 ring-indigo-600/10 shadow-2xl scale-[1.02]"
+                                                    : "border-transparent hover:border-indigo-300 dark:hover:border-indigo-800 shadow-sm"
                                                     }`}
                                             >
-                                                <div className="aspect-[3/4] relative bg-slate-100">
-                                                    <Image
-                                                        src={getImageUrl(demo.imageUrls?.[0])}
-                                                        alt={demo.title}
-                                                        fill
-                                                        className="object-cover object-top"
-                                                        unoptimized
-                                                    />
-                                                    {selectedTemplate === demo._id && (
-                                                        <div className="absolute inset-0 bg-blue-600/20 flex items-center justify-center">
-                                                            <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg">
-                                                                <Check className="w-6 h-6" />
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="p-2 md:p-3 bg-white dark:bg-slate-950">
-                                                    <p className="font-bold text-xs md:text-sm truncate">{demo.title}</p>
+                                                <Image
+                                                    src={getImageUrl(demo.imageUrls?.[0])}
+                                                    alt={demo.title}
+                                                    fill
+                                                    className={`object-cover object-top transition-all duration-700 ${selectedTemplate === demo._id ? "scale-105" : "group-hover:scale-105"}`}
+                                                    unoptimized
+                                                />
+
+                                                {/* Selection Overlay */}
+                                                <div className={`absolute inset-0 transition-opacity duration-300 ${selectedTemplate === demo._id ? "bg-indigo-600/10" : "bg-black/0 group-hover:bg-black/5"}`} />
+
+                                                {/* Selected Badge */}
+                                                {selectedTemplate === demo._id && (
+                                                    <div className="absolute top-3 right-3 bg-indigo-600 text-white p-2 rounded-full shadow-xl animate-in zoom-in-50 duration-300">
+                                                        <Check className="w-4 h-4" />
+                                                    </div>
+                                                )}
+
+                                                {/* Hover Visuals (Optional subtle title) */}
+                                                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <p className="text-white text-[10px] font-black uppercase tracking-widest truncate">{demo.title}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -218,25 +231,27 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
 
                                     {/* Pagination UI for Templates */}
                                     {totalPages > 1 && (
-                                        <div className="flex items-center justify-center gap-4 mt-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                        <div className="flex items-center justify-center gap-6 mt-12 py-6 border-t border-slate-100 dark:border-slate-800">
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() => handlePageChange(page - 1)}
                                                 disabled={page === 1}
-                                                className="rounded-full gap-2"
+                                                className="rounded-xl px-6 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all gap-2"
                                             >
                                                 <ChevronLeft className="w-4 h-4" /> আগের গুলো
                                             </Button>
-                                            <div className="text-sm font-bold text-slate-500">
-                                                ধাপ {page} / {totalPages}
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-black text-indigo-600">{page}</span>
+                                                <span className="text-sm font-bold text-slate-300">/</span>
+                                                <span className="text-sm font-bold text-slate-500">{totalPages}</span>
                                             </div>
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 onClick={() => handlePageChange(page + 1)}
                                                 disabled={page === totalPages}
-                                                className="rounded-full gap-2"
+                                                className="rounded-xl px-6 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all gap-2"
                                             >
                                                 পরের গুলো <ChevronRight className="w-4 h-4" />
                                             </Button>
@@ -334,22 +349,22 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-between bg-slate-50/50 dark:bg-slate-900/50">
+                <div className="p-4 md:p-8 border-t border-slate-100 dark:border-slate-800 flex justify-between bg-white dark:bg-slate-900">
                     <Button
                         variant="ghost"
                         onClick={() => setStep(Math.max(1, step - 1))}
                         disabled={step === 1}
-                        className="font-bangla"
+                        className="font-bangla text-xs md:text-sm"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" /> ফিরে যান
                     </Button>
 
                     {step < 3 ? (
-                        <Button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 font-bangla">
+                        <Button onClick={handleNext} className="bg-indigo-600 hover:bg-indigo-700 font-bangla text-xs md:text-sm px-6 md:px-8">
                             পরবর্তী ধাপ <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                     ) : (
-                        <Button onClick={handleSubmit} disabled={submitting} className="bg-green-600 hover:bg-green-700 font-bangla">
+                        <Button onClick={handleSubmit} disabled={submitting} className="bg-emerald-600 hover:bg-emerald-700 font-bangla text-xs md:text-sm px-6 md:px-8">
                             {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                             অর্ডার নিশ্চিত করুন
                         </Button>

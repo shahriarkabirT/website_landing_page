@@ -13,6 +13,9 @@ import {
 import Link from "next/link";
 import { DemoCard } from "./demo-card";
 import { DemoOverlay } from "./demo-overlay";
+import { DemoDetailsModal } from "./demo-details-modal";
+import { PlanSelectionModal } from "./plan-selection-modal";
+import OrderModal from "./order-modal";
 
 interface Demo {
     _id: string;
@@ -25,6 +28,11 @@ interface Demo {
 export default function DemoSection() {
     const [demos, setDemos] = useState<Demo[]>([]);
     const [selectedDemo, setSelectedDemo] = useState<Demo | null>(null);
+    const [readMoreDemo, setReadMoreDemo] = useState<Demo | null>(null);
+    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+    const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState<any>(null);
+    const [demoForOrder, setDemoForOrder] = useState<Demo | null>(null);
     const [isZoomed, setIsZoomed] = useState(false);
     const [loading, setLoading] = useState(true);
     const [api, setApi] = useState<CarouselApi>()
@@ -117,6 +125,7 @@ export default function DemoSection() {
                                             demo={demo}
                                             isActive={current === index}
                                             onClick={() => setSelectedDemo(demo)}
+                                            onReadMore={() => setReadMoreDemo(demo)}
                                             getImageUrl={getImageUrl}
                                         />
                                     </CarouselItem>
@@ -155,6 +164,38 @@ export default function DemoSection() {
                 setCurrentImageIndex={setCurrent}
                 getImageUrl={getImageUrl}
             />
+
+            <DemoDetailsModal
+                demo={readMoreDemo}
+                isOpen={!!readMoreDemo}
+                onClose={() => setReadMoreDemo(null)}
+                getImageUrl={getImageUrl}
+                onOrder={(demo) => {
+                    setDemoForOrder(demo);
+                    setReadMoreDemo(null);
+                    setIsPlanModalOpen(true);
+                }}
+            />
+
+            <PlanSelectionModal
+                isOpen={isPlanModalOpen}
+                onClose={() => setIsPlanModalOpen(false)}
+                onSelectPlan={(plan) => {
+                    setSelectedPlan(plan);
+                    setIsPlanModalOpen(false);
+                    setIsOrderModalOpen(true);
+                }}
+            />
+
+            {selectedPlan && demoForOrder && (
+                <OrderModal
+                    isOpen={isOrderModalOpen}
+                    onClose={() => setIsOrderModalOpen(false)}
+                    planName={selectedPlan.name}
+                    planPrice={selectedPlan.price}
+                    initialTemplateId={demoForOrder._id}
+                />
+            )}
         </section>
     );
 }

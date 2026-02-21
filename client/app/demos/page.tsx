@@ -6,6 +6,9 @@ import Link from "next/link";
 import Navbar from "../components/navbar";
 import { DemoCard } from "../components/demo-card";
 import { DemoOverlay } from "../components/demo-overlay";
+import { DemoDetailsModal } from "../components/demo-details-modal";
+import { PlanSelectionModal } from "../components/plan-selection-modal";
+import OrderModal from "../components/order-modal";
 import {
     Pagination,
     PaginationContent,
@@ -33,6 +36,11 @@ interface PaginatedResponse {
 export default function DemosPage() {
     const [data, setData] = useState<PaginatedResponse | null>(null);
     const [selectedDemo, setSelectedDemo] = useState<Demo | null>(null);
+    const [readMoreDemo, setReadMoreDemo] = useState<Demo | null>(null);
+    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+    const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState<any>(null);
+    const [demoForOrder, setDemoForOrder] = useState<Demo | null>(null);
     const [isZoomed, setIsZoomed] = useState(false);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -119,6 +127,7 @@ export default function DemosPage() {
                                                 setSelectedDemo(demo);
                                                 setCurrentImageIndex(0);
                                             }}
+                                            onReadMore={() => setReadMoreDemo(demo)}
                                             getImageUrl={getImageUrl}
                                         />
                                     ))
@@ -232,6 +241,38 @@ export default function DemosPage() {
                 setCurrentImageIndex={setCurrentImageIndex}
                 getImageUrl={getImageUrl}
             />
+
+            <DemoDetailsModal
+                demo={readMoreDemo}
+                isOpen={!!readMoreDemo}
+                onClose={() => setReadMoreDemo(null)}
+                getImageUrl={getImageUrl}
+                onOrder={(demo) => {
+                    setDemoForOrder(demo);
+                    setReadMoreDemo(null);
+                    setIsPlanModalOpen(true);
+                }}
+            />
+
+            <PlanSelectionModal
+                isOpen={isPlanModalOpen}
+                onClose={() => setIsPlanModalOpen(false)}
+                onSelectPlan={(plan) => {
+                    setSelectedPlan(plan);
+                    setIsPlanModalOpen(false);
+                    setIsOrderModalOpen(true);
+                }}
+            />
+
+            {selectedPlan && demoForOrder && (
+                <OrderModal
+                    isOpen={isOrderModalOpen}
+                    onClose={() => setIsOrderModalOpen(false)}
+                    planName={selectedPlan.name}
+                    planPrice={selectedPlan.price}
+                    initialTemplateId={demoForOrder._id}
+                />
+            )}
         </main>
     );
 }

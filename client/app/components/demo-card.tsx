@@ -17,10 +17,11 @@ interface DemoCardProps {
     demo: Demo;
     isActive?: boolean;
     onClick: () => void;
+    onReadMore: (e: React.MouseEvent) => void;
     getImageUrl: (url: string) => string;
 }
 
-export function DemoCard({ demo, isActive = true, onClick, getImageUrl }: DemoCardProps) {
+export function DemoCard({ demo, isActive = true, onClick, onReadMore, getImageUrl }: DemoCardProps) {
     return (
         <motion.div
             layoutId={`demo-card-${demo._id}`}
@@ -63,18 +64,31 @@ export function DemoCard({ demo, isActive = true, onClick, getImageUrl }: DemoCa
                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {demo.description}
                 </p>
-                {demo.link && (
-                    <a
-                        href={demo.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                <div className="mt-auto flex items-center justify-between pt-4">
+                    {demo.link ? (
+                        <a
+                            href={demo.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                        >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            Live Demo
+                        </a>
+                    ) : (
+                        <div />
+                    )}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onReadMore(e);
+                        }}
+                        className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1 border-b border-slate-200 dark:border-slate-800 pb-0.5"
                     >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        Live Demo
-                    </a>
-                )}
+                        Read More
+                    </button>
+                </div>
             </div>
         </motion.div>
     );
