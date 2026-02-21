@@ -234,16 +234,23 @@ export default function DemoSection() {
                             >
                                 <Carousel
                                     opts={{
-                                        align: "center",
-                                        loop: true,
+                                        align: (selectedDemo.imageUrls?.length || 0) <= 2 ? "center" : "start",
+                                        loop: (selectedDemo.imageUrls?.length || 0) > 2,
+                                        containScroll: "trimSnaps",
                                     }}
                                     className="w-full max-w-[1400px] h-full mx-auto group/carousel"
                                 >
-                                    <CarouselContent className="h-[90vh] -ml-8">
+                                    <CarouselContent className={cn(
+                                        "h-[90vh] -ml-8",
+                                        (selectedDemo.imageUrls?.length || 0) <= 2 && "justify-center"
+                                    )}>
                                         {(selectedDemo.imageUrls && selectedDemo.imageUrls.length > 0 ? selectedDemo.imageUrls : [""]).map((url, idx) => (
                                             <CarouselItem
                                                 key={idx}
-                                                className="h-full flex items-center justify-center basis-auto pl-8 py-8"
+                                                className={cn(
+                                                    "h-full flex items-center justify-center basis-auto pl-8 py-8",
+                                                    (selectedDemo.imageUrls?.length || 0) === 1 && "basis-full"
+                                                )}
                                             >
                                                 <div className="relative h-full flex items-center justify-center group/item">
                                                     <Image
@@ -269,8 +276,12 @@ export default function DemoSection() {
                                         ))}
                                     </CarouselContent>
 
-                                    <CarouselPrevious className="absolute left-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md" />
-                                    <CarouselNext className="absolute right-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md" />
+                                    {(selectedDemo.imageUrls?.length || 0) > 1 && (
+                                        <>
+                                            <CarouselPrevious className="absolute left-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md" />
+                                            <CarouselNext className="absolute right-8 top-1/2 -translate-y-1/2 z-20 h-14 w-14 bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md" />
+                                        </>
+                                    )}
                                 </Carousel>
 
                                 <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md pointer-events-none border border-white/10">
