@@ -9,6 +9,7 @@ import { Check, Loader2, Info, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight 
 import { toast } from "sonner"
 import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
+import { cn } from "@/lib/utils"
 
 interface Demo {
     _id: string
@@ -166,7 +167,12 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[1400px] w-[95vw] max-h-[96vh] md:max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl">
+            <DialogContent
+                className={cn(
+                    "w-[95vw] max-h-[96vh] md:max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl transition-all duration-300 ease-in-out",
+                    step === 1 ? "sm:max-w-[1400px]" : "sm:max-w-[650px]"
+                )}
+            >
                 {/* Header */}
                 <div className="p-4 md:p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
                     <div>
