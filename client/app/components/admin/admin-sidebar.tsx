@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@/context/AuthContext"
-import { CreditCard, Layers, LayoutDashboard, LogOut, MessageSquare } from "lucide-react"
+import { CreditCard, Layers, LayoutDashboard, LogOut, MessageSquare, MessageCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface AdminSidebarProps {
@@ -13,6 +13,10 @@ export default function AdminSidebar({ activeView, onChangeView }: AdminSidebarP
     const { user, logout } = useAuth()
     const router = useRouter()
     const handleNavigation = (view: string) => {
+        if (view === "chat") {
+            router.push("/admin/chat")
+            return
+        }
         if (onChangeView) {
             onChangeView(view)
         } else {
@@ -56,6 +60,15 @@ export default function AdminSidebar({ activeView, onChangeView }: AdminSidebarP
                     className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold ${isActive("pricing") ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
                 >
                     <CreditCard className="w-5 h-5" /> Pricing Plans
+                </button>
+                <div className="pt-4 pb-2">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-3">Communication</p>
+                </div>
+                <button
+                    onClick={() => handleNavigation("chat")}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold ${isActive("chat") ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
+                >
+                    <MessageCircle className="w-5 h-5" /> Live Chat
                 </button>
             </nav>
 

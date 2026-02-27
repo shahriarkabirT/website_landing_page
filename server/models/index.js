@@ -76,3 +76,4 @@ export const Plan = mongoose.model("Plan", planSchema)
 export const Order = mongoose.model("Order", orderSchema)
 export const Consultation = mongoose.model("Consultation", consultationSchema)
 export const Demo = mongoose.model("Demo", demoSchema)
+export { ChatSession } from "./Chat.js"

@@ -148,9 +148,9 @@ export default function DemoSection() {
                 <div className="mt-12 text-center">
                     <Link
                         href="/demos"
-                        className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white font-bold transition-all hover:gap-4 shadow-xl hover:shadow-2xl"
+                        className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-blue-600 text-white font-bold transition-all hover:gap-4 hover:bg-blue-700 shadow-xl hover:shadow-2xl"
                     >
-                        অন্যান্য সকল টেমপ্লেট দেখুন <ArrowRight className="w-5 h-5 text-blue-500" />
+                        অন্যান্য সকল টেমপ্লেট দেখুন <ArrowRight className="w-5 h-5 text-white" />
                     </Link>
                 </div>
             </div>

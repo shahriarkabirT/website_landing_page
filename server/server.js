@@ -1,5 +1,7 @@
 import "dotenv/config"
 import express from "express"
+import http from "http"
+import { Server } from "socket.io"
 import cors from "cors"
 import session from "express-session"
 import cookieParser from "cookie-parser"
@@ -14,6 +16,8 @@ import paymentRoutes from "./routes/paymentRoutes.js"
 import consultationRoutes from "./routes/consultationRoutes.js"
 import demoRoutes from "./routes/demoRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
+import chatRoutes from "./routes/chatRoutes.js"
+import { setupChatSocket } from "./socket/chatHandler.js"
 import { globalLimiter, consultationLimiter, orderLimiter, sessionLimiter } from "./middleware/rateLimiter.js"
 import { User, Plan } from "./models/index.js"
 import path from "path"
@@ -22,6 +26,32 @@ import path from "path"
 connectDB()
 
 const app = express()
+const server = http.createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:3000",
+        "https://idokans.com",
+        "https://www.idokans.com",
+        process.env.FRONTEND_URL
+      ].filter(Boolean)
+
+      if (!origin) return callback(null, true)
+
+      if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".idokans.com")) {
+        callback(null, true)
+      } else {
+        callback(new Error("Not allowed by CORS"))
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  }
+})
+
+setupChatSocket(io)
+
 app.set("trust proxy", 1)
 
 app.use(
@@ -80,6 +110,7 @@ app.use("/api/payment", orderLimiter, paymentRoutes) // Protect checkout
 app.use("/api/consultation", consultationLimiter, consultationRoutes) // Spam prevention
 app.use("/api/demo", demoRoutes)
 app.use("/api/upload", uploadRoutes)
+app.use("/api/chat", chatRoutes)
 
 const __dirname = path.resolve()
 console.log("Serving static files from:", path.join(__dirname, "/uploads"))
@@ -147,6 +178,6 @@ app.get("/health", (req, res) => {
 })
 
 const PORT = process.env.PORT || 5001
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`✓ Backend running on http://localhost:${PORT}`)
 })
