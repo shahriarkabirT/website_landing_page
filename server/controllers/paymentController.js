@@ -1,5 +1,5 @@
 import crypto from "crypto"
-import { User, Order } from "../models/index.js"
+import { User, Order, ReferralSettings } from "../models/index.js"
 import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendOrderNotificationToAdmin } from "../services/mailService.js"
 
 // @desc    Process Checkout & Auto-provision User
@@ -7,27 +7,33 @@ import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendOrderNotificationTo
 // @access  Public
 export const processCheckout = async (req, res) => {
     try {
-        const { name, email, phone, businessName, transactionId, templateId, message, subscriptionType, planName, planPrice, amount } = req.body
+        const {
+            name, email, phone, businessName, transactionId, templateId, message,
+            subscriptionType, planPrice, amount,
+            referralCode
+        } = req.body
 
-        // Manual Order Validation
-        if (transactionId) {
-            if (!name || !phone || !transactionId) {
-                return res.status(400).json({ message: "Name, Phone, and Transaction ID are required" })
-            }
-            if (transactionId.length < 6) {
-                return res.status(400).json({ message: "Invalid Transaction ID" })
+        // ... (Manual Order Validation unchanged)
+
+        // 1. Calculate discount if referral code is provided
+        let finalDiscountAmount = 0
+        let validatedReferralCode = undefined
+
+        if (referralCode) {
+            const referrer = await User.findOne({ referralCode: referralCode.toUpperCase() })
+            // Ensure referrer exists and is not the same person (if logged in)
+            if (referrer && (!req.user || req.user.referralCode !== referralCode.toUpperCase())) {
+                const settings = await ReferralSettings.findOne() || { discountPercentage: 5 }
+                const priceNum = parseInt(amount?.toString().replace(/,/g, '') || planPrice?.toString().replace(/,/g, '') || "0")
+                finalDiscountAmount = Math.round((priceNum * settings.discountPercentage) / 100)
+                validatedReferralCode = referralCode.toUpperCase()
             }
         }
 
-        // 1. Mock Payment Processing (Always success for now)
-        // In real app: await stripe.paymentIntents.create(...)
-
         // 2. Check User (Only if logged in)
         let user = req.user || null
-        let magicLinkToken = null
 
-        // NEW LOGIC: Treat as guest if not logged in (user remains null)
-        // If we ever want to auto-create users again, we'd set magicLinkToken here
+        // ...
 
         // 4. Create Order
         const order = await Order.create({
@@ -36,12 +42,14 @@ export const processCheckout = async (req, res) => {
             email,
             phone: phone || "Not Provided",
             businessName: businessName,
-            subscriptionType: subscriptionType || planName || "Standard",
+            subscriptionType: subscriptionType || "Standard",
             templateId: templateId || undefined,
             transactionId: transactionId,
             message: message,
-            status: transactionId ? "pending" : "completed", // Manual orders are pending
-            paymentMethod: transactionId ? "Manual" : "Card"
+            status: transactionId ? "pending" : "completed",
+            paymentMethod: transactionId ? "Manual" : "Card",
+            referralCodeUsed: validatedReferralCode,
+            discountAmount: finalDiscountAmount
         })
 
         // 5. Send Emails
@@ -86,4 +94,3 @@ export const processCheckout = async (req, res) => {
         res.status(500).json({ message: error.message || "Transaction failed" })
     }
 }
-

@@ -1,7 +1,10 @@
 import express from "express"
 import passport from "passport"
 import {
-    registerUser,
+    registerOTP,
+    verifyOTP,
+    forgotPassword,
+    resetPassword,
     authUser,
     getUserProfile,
     sendMagicLink,
@@ -17,7 +20,10 @@ import { authLimiter } from "../middleware/rateLimiter.js"
 const router = express.Router()
 
 // Standard Auth
-router.post("/register", authLimiter, registerUser)
+router.post("/register-otp", authLimiter, registerOTP)
+router.post("/verify-otp", authLimiter, verifyOTP)
+router.post("/forgot-password", authLimiter, forgotPassword)
+router.post("/reset-password", authLimiter, resetPassword)
 router.post("/login", authLimiter, authUser)
 router.post("/logout", logoutUser)
 router.post("/refresh", refreshToken)

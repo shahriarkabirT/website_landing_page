@@ -117,3 +117,46 @@ export const sendOrderNotificationToAdmin = async (orderDetails) => {
   }
   return transporter.sendMail(mailOptions)
 }
+export const sendOTPEmail = async (email, otp) => {
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: `${otp} is your iDokan verification code`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #2563eb; margin-bottom: 10px;">Verify Your Email</h2>
+        <p>Your verification code is:</p>
+        <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1e293b;">${otp}</span>
+        </div>
+        <p style="color: #64748b; font-size: 14px;">This code will expire in 10 minutes. Please do not share this code with anyone.</p>
+        <p style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; color: #64748b; font-size: 14px;">
+          Best Regards,<br>Team iDokan
+        </p>
+      </div>
+    `,
+  }
+  return transporter.sendMail(mailOptions)
+}
+
+export const sendPasswordResetEmail = async (email, otp) => {
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: `${otp} is your password reset code`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #2563eb; margin-bottom: 10px;">Reset Your Password</h2>
+        <p>You requested to reset your password. Use the following code to proceed:</p>
+        <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1e293b;">${otp}</span>
+        </div>
+        <p style="color: #64748b; font-size: 14px;">If you didn't request a password reset, please ignore this email.</p>
+        <p style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; color: #64748b; font-size: 14px;">
+          Best Regards,<br>Team iDokan
+        </p>
+      </div>
+    `,
+  }
+  return transporter.sendMail(mailOptions)
+}

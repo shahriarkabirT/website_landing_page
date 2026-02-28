@@ -15,9 +15,11 @@ interface LoginViewProps {
 export default function LoginView({ onSuccess }: LoginViewProps) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [otp, setOtp] = useState("")
+    const [newPassword, setNewPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [magicLinkSent, setMagicLinkSent] = useState(false)
-    const [authMode, setAuthMode] = useState<"password" | "magic-link">("password")
+    const [authMode, setAuthMode] = useState<"password" | "magic-link" | "forgot-password" | "reset-password">("password")
     const router = useRouter()
     const searchParams = useSearchParams()
     const pathname = usePathname()
@@ -87,6 +89,55 @@ export default function LoginView({ onSuccess }: LoginViewProps) {
         }
     }
 
+    const handleForgotPassword = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/forgot-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            })
+            const data = await res.json()
+            if (res.ok) {
+                toast.success("Password reset code sent to your email")
+                setAuthMode("reset-password")
+            } else {
+                toast.error(data.message || "Failed to send reset code")
+            }
+        } catch (error) {
+            toast.error("An error occurred")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleResetPassword = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, otp, newPassword }),
+            })
+            if (res.ok) {
+                toast.success("Password reset successful. Please login.")
+                setAuthMode("password")
+                setPassword("")
+                setOtp("")
+                setNewPassword("")
+            } else {
+                const data = await res.json()
+                toast.error(data.message || "Invalid or expired code")
+            }
+        } catch (error) {
+            toast.error("An error occurred")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const handleGoogleLogin = () => {
         // Save current path if not already on a login page
         if (!pathname.includes("/login")) {
@@ -116,11 +167,91 @@ export default function LoginView({ onSuccess }: LoginViewProps) {
         )
     }
 
+    if (authMode === "forgot-password") {
+        return (
+            <div className="w-full">
+                <div className="text-center mb-10">
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Forgot Password</h1>
+                    <p className="text-slate-500">Enter your email to receive a reset code</p>
+                </div>
+                <form onSubmit={handleForgotPassword} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Email Address</label>
+                        <Input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="you@example.com"
+                            required
+                            className="h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-xl shadow-blue-500/20 transition-all"
+                    >
+                        {loading ? <span className="animate-pulse">Sending...</span> : "Send Reset Code"}
+                    </Button>
+                    <button
+                        type="button"
+                        onClick={() => setAuthMode("password")}
+                        className="w-full text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                    >
+                        Back to Login
+                    </button>
+                </form>
+            </div>
+        )
+    }
+
+    if (authMode === "reset-password") {
+        return (
+            <div className="w-full">
+                <div className="text-center mb-10">
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Reset Password</h1>
+                    <p className="text-slate-500">Enter the code sent to your email</p>
+                </div>
+                <form onSubmit={handleResetPassword} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Verification Code</label>
+                        <Input
+                            type="text"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                            placeholder="123456"
+                            required
+                            className="h-14 text-center text-2xl font-black tracking-[10px] rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300">New Password</label>
+                        <Input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder="••••••••"
+                            required
+                            className="h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-xl shadow-blue-500/20 transition-all"
+                    >
+                        {loading ? <span className="animate-pulse">Resetting...</span> : "Reset Password"}
+                    </Button>
+                </form>
+            </div>
+        )
+    }
+
     return (
         <div className="w-full">
             <div className="text-center mb-10">
-                <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Welcome</h1>
-                <p className="text-slate-500">Sign in to your dashboard</p>
+                <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2 underline decoration-blue-500 decoration-4 underline-offset-4 font-bangla">স্বাগতম</h1>
+                <p className="text-slate-500 font-bangla">আপনার ড্যাশবোর্ডে লগইন করুন।</p>
             </div>
 
             <div className="space-y-4 mb-8">
@@ -147,21 +278,21 @@ export default function LoginView({ onSuccess }: LoginViewProps) {
                             fill="#EA4335"
                         />
                     </svg>
-                    Continue with Google
+                    Google দিয়ে লগইন করুন
                 </Button>
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-slate-100 dark:border-slate-800"></span>
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white dark:bg-slate-900 px-4 text-slate-400 font-bold">Or</span>
+                        <span className="bg-white dark:bg-slate-900 px-4 text-slate-400 font-bold">অথবা</span>
                     </div>
                 </div>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Email Address</label>
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300 font-bangla">ইমেল অ্যাড্রেস</label>
                     <Input
                         type="email"
                         value={email}
@@ -175,7 +306,14 @@ export default function LoginView({ onSuccess }: LoginViewProps) {
                 {authMode === "password" && (
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                            <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Password</label>
+                            <label className="text-sm font-bold text-slate-700 dark:text-slate-300 font-bangla">পাসওয়ার্ড</label>
+                            <button
+                                type="button"
+                                onClick={() => setAuthMode("forgot-password")}
+                                className="text-xs font-bold text-blue-600 hover:underline font-bangla"
+                            >
+                                পাসওয়ার্ড ভুলে গেছেন?
+                            </button>
                         </div>
                         <Input
                             type="password"
@@ -191,9 +329,9 @@ export default function LoginView({ onSuccess }: LoginViewProps) {
                 <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-xl shadow-blue-500/20 transition-all transform hover:scale-[1.02]"
+                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-xl shadow-blue-500/20 transition-all font-bangla"
                 >
-                    {loading ? <span className="animate-pulse">Processing...</span> : (authMode === "magic-link" ? "Send Magic Link" : "Login")}
+                    {loading ? <span className="animate-pulse">প্রসেস হচ্ছে...</span> : (authMode === "magic-link" ? "ম্যাজিক লিঙ্ক পাঠান" : "লগইন করুন")}
                 </Button>
             </form>
 
@@ -202,25 +340,25 @@ export default function LoginView({ onSuccess }: LoginViewProps) {
                     <button
                         type="button"
                         onClick={() => setAuthMode("magic-link")}
-                        className="text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                        className="text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors font-bangla"
                     >
-                        Login with Magic Link
+                        ম্যাজিক লিঙ্ক দিয়ে লগইন করুন
                     </button>
                 ) : (
                     <button
                         type="button"
                         onClick={() => setAuthMode("password")}
-                        className="text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                        className="text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors font-bangla"
                     >
-                        Login with Password
+                        পাসওয়ার্ড দিয়ে লগইন করুন
                     </button>
                 )}
 
                 {authMode === "password" && (
-                    <p className="text-sm text-slate-500">
-                        Don't have an account?{" "}
+                    <p className="text-sm text-slate-500 font-bangla">
+                        অ্যাকাউন্ট নেই?{" "}
                         <a href="/register" className="text-blue-600 font-bold hover:underline">
-                            Register now
+                            নতুন অ্যাকাউন্ট খুলুন
                         </a>
                     </p>
                 )}

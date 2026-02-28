@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, CreditCard, LogOut, Package, Loader2, MessageSquare, User, Calendar, CheckSquare, Layers, Plus, Trash2, Edit, Eye, Archive, RotateCcw } from "lucide-react"
+import { LayoutDashboard, CreditCard, LogOut, Package, Loader2, MessageSquare, User, Calendar, CheckSquare, Layers, Plus, Trash2, Edit, Eye, Archive, RotateCcw, Sparkles } from "lucide-react"
 import AdminSidebar from "../../components/admin/admin-sidebar"
 import PricingManager from "../../components/admin/pricing-manager"
+import ReferralSettingsManager from "../../components/admin/referral-settings-manager"
+import WithdrawalManager from "../../components/admin/withdrawal-manager"
 import { useAuth } from "@/context/AuthContext"
 import {
     Select,
@@ -243,9 +245,13 @@ export default function DashboardPage() {
             <AdminSidebar activeView={view} onChangeView={setView} />
 
             {/* Main Content - Single Page Application View Switching */}
-            <main className="flex-1 ml-64 p-10 overflow-y-auto">
+            <main className="flex-1 ml-72 p-10 overflow-y-auto">
                 {view === "pricing" ? (
                     <PricingManager />
+                ) : view === "referral" ? (
+                    <ReferralSettingsManager />
+                ) : view === "withdrawals" ? (
+                    <WithdrawalManager />
                 ) : (
                     <>
                         <header className="mb-10 flex justify-between items-center">

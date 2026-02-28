@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import { User, Plan, Order } from "../models/index.js"
+import { User, Plan, Order, ReferralSettings } from "../models/index.js"
 
 // Auth Controllers
 export const loginAdmin = async (req, res) => {
@@ -84,16 +84,35 @@ export const createOrder = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
     try {
         const { status } = req.body
-        const order = await Order.findByIdAndUpdate(
-            req.params.id,
-            { status },
-            { new: true }
-        )
+        const order = await Order.findById(req.params.id)
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" })
+        }
+
+        const oldStatus = order.status
+        order.status = status
+        await order.save()
+
+        // Referral Logic: Reward referrer when order is completed
+        if (status === 'completed' && oldStatus !== 'completed' && order.referralCodeUsed && !order.referrerRewardPaid) {
+            const referrer = await User.findOne({ referralCode: order.referralCodeUsed })
+            if (referrer) {
+                const settings = await ReferralSettings.findOne() || { rewardCoins: 100 }
+                referrer.coins = (referrer.coins || 0) + settings.rewardCoins
+                await referrer.save()
+
+                order.referrerRewardPaid = true
+                await order.save()
+            }
+        }
+
         res.json(order)
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
 }
+
 export const toggleOrderArchive = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)

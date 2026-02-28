@@ -133,7 +133,7 @@ export default function Navbar() {
                             </Button>
                             <Link href="/register">
                                 <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 px-6">
-                                    শুরু করুন
+                                    রেজিস্টার
                                 </Button>
                             </Link>
                         </div>
@@ -226,7 +226,7 @@ export default function Navbar() {
                             </Button>
                             <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
                                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20">
-                                    শুরু করুন
+                                    রেজিস্টার
                                 </Button>
                             </Link>
                         </div>

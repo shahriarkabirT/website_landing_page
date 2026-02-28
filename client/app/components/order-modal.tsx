@@ -47,10 +47,38 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
         phone: "",
         email: "",
         businessName: "",
-        transactionId: ""
+        transactionId: "",
+        referralCode: ""
     })
 
+    const [referralInfo, setReferralInfo] = useState<{
+        valid: boolean;
+        discountPercentage: number;
+        referrerName: string;
+    } | null>(null)
+    const [validatingReferral, setValidatingReferral] = useState(false)
+
     const { user } = useAuth() // Use auth context
+
+    const applyReferralCode = async () => {
+        if (!formData.referralCode) return;
+        setValidatingReferral(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/referral/verify/${formData.referralCode}`);
+            const data = await res.json();
+            if (data.valid) {
+                setReferralInfo(data);
+                toast.success(`${data.referrerName}-এর রেফারেল কোড সফলভাবে যুক্ত হয়েছে! আপনি ${data.discountPercentage}% ডিসকাউন্ট পাবেন।`);
+            } else {
+                setReferralInfo(null);
+                toast.error("ভুল রেফারেল কোড");
+            }
+        } catch (error) {
+            console.error("Referral validation error:", error);
+        } finally {
+            setValidatingReferral(false);
+        }
+    }
 
     useEffect(() => {
         if (isOpen) {
@@ -70,7 +98,9 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                 phone: initialData?.phone || user?.phone || "",
                 email: initialData?.email || user?.email || "",
                 businessName: initialData?.businessName || "",
+                referralCode: "" // Reset referral code on open
             }))
+            setReferralInfo(null);
         }
     }, [isOpen, initialData, user, initialTemplateId])
 
@@ -129,6 +159,15 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
 
         setSubmitting(true)
         try {
+            // Calculate discounted price if applicable
+            let finalPrice = planPrice;
+            let discountAmount = 0;
+            if (referralInfo && referralInfo.valid) {
+                const priceNum = parseInt(planPrice.replace(/,/g, ''));
+                discountAmount = Math.round((priceNum * referralInfo.discountPercentage) / 100);
+                // We keep original planPrice in order but send discountAmount
+            }
+
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -138,7 +177,9 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                     subscriptionType: planName,
                     amount: planPrice,
                     templateId: selectedTemplate,
-                    paymentMethod: "Manual/Bkash/Nagad"
+                    paymentMethod: "Manual/Bkash/Nagad",
+                    referralCode: referralInfo?.valid ? formData.referralCode : undefined,
+                    discountAmount: discountAmount
                 })
             })
 
@@ -156,6 +197,7 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
             setSubmitting(false)
         }
     }
+
 
     // Helper for image URL
     const getImageUrl = (url: string) => {
@@ -303,6 +345,48 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                                     placeholder="আপনার ব্যবসার নাম"
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <Label className="font-bangla">রেফারেল কোড (ঐচ্ছিক)</Label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        value={formData.referralCode}
+                                        onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
+                                        placeholder="যদি থাকে (যেমন: ABC123)"
+                                        className="uppercase"
+                                        disabled={!!referralInfo}
+                                    />
+                                    {!referralInfo ? (
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={applyReferralCode}
+                                            disabled={validatingReferral || !formData.referralCode}
+                                            className="h-10 px-4 font-bold"
+                                        >
+                                            {validatingReferral ? <Loader2 className="w-4 h-4 animate-spin" /> : "যুক্ত করুন"}
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() => {
+                                                setReferralInfo(null);
+                                                setFormData({ ...formData, referralCode: "" });
+                                            }}
+                                            className="h-10 px-4 font-bold text-red-500"
+                                        >
+                                            সরান
+                                        </Button>
+                                    )}
+                                </div>
+                                {referralInfo && (
+                                    <p className="text-xs text-green-600 font-bold flex items-center gap-1 mt-1">
+                                        <Check className="w-3 h-3" /> {referralInfo.discountPercentage}% ডিসকাউন্ট যুক্ত করা হয়েছে ({referralInfo.referrerName}-এর রেফারেল)
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     )}
 
@@ -310,6 +394,15 @@ export default function OrderModal({ planName, planPrice, isOpen, onClose, initi
                         <div className="max-w-lg mx-auto space-y-6 py-4">
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4">
                                 <h3 className="font-bold text-lg font-bangla">নিচের নম্বরে পেমেন্ট করুন</h3>
+                                {referralInfo && (
+                                    <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-xl border border-green-100 dark:border-green-800/50 mb-4 animate-in zoom-in-95 duration-300">
+                                        <p className="font-bold text-sm">ডিসকাউন্ট Applied: {referralInfo.discountPercentage}% OFF</p>
+                                        <p className="text-xs">অরিজিনাল প্রাইস: {planPrice} BDT</p>
+                                        <p className="text-lg font-black">ডিসকাউন্টেড প্রাইস: {
+                                            Math.round(parseInt(planPrice.replace(/,/g, '')) * (1 - referralInfo.discountPercentage / 100)).toLocaleString()
+                                        } BDT</p>
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-xl border">
                                         <span className="font-bold text-pink-600">bKash Personal</span>

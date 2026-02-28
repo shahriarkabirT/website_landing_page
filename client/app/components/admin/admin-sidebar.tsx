@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@/context/AuthContext"
-import { CreditCard, Layers, LayoutDashboard, LogOut, MessageSquare, MessageCircle } from "lucide-react"
+import { CreditCard, Layers, LayoutDashboard, LogOut, MessageSquare, MessageCircle, Users, Banknote } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface AdminSidebarProps {
@@ -30,7 +30,7 @@ export default function AdminSidebar({ activeView, onChangeView }: AdminSidebarP
     }
 
     return (
-        <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col fixed h-full z-10">
+        <aside className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col fixed h-full z-10">
             <div className="mb-10">
                 <h2 className="text-2xl font-black text-blue-600">AdminPanel</h2>
                 <p className="text-xs text-slate-400 mt-1 font-bold truncate">{user?.email}</p>
@@ -60,6 +60,18 @@ export default function AdminSidebar({ activeView, onChangeView }: AdminSidebarP
                     className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold ${isActive("pricing") ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
                 >
                     <CreditCard className="w-5 h-5" /> Pricing Plans
+                </button>
+                <button
+                    onClick={() => handleNavigation("referral")}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold ${isActive("referral") ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
+                >
+                    <Users className="w-5 h-5" /> Referral Settings
+                </button>
+                <button
+                    onClick={() => handleNavigation("withdrawals")}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold ${isActive("withdrawals") ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
+                >
+                    <Banknote className="w-5 h-5" /> Withdraw Requests
                 </button>
                 <div className="pt-4 pb-2">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-3">Communication</p>

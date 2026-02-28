@@ -14,6 +14,15 @@ const userSchema = new mongoose.Schema({
     // Profile
     phone: { type: String },
     avatar: { type: String },
+    isVerified: { type: Boolean, default: false },
+    otp: { type: String },
+    otpExpires: { type: Date },
+    resetPasswordOTP: { type: String },
+    resetPasswordExpires: { type: Date },
+    // Referral System
+    referralCode: { type: String, unique: true, sparse: true },
+    coins: { type: Number, default: 0 },
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true })
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
@@ -22,11 +31,15 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 }
 
 userSchema.pre('save', async function () {
-    if (!this.isModified('password') || !this.password) {
-        return
+    if (this.isModified('password') && this.password) {
+        const salt = await bcrypt.genSalt(10)
+        this.password = await bcrypt.hash(this.password, salt)
     }
-    const salt = await bcrypt.genSalt(10)
-    this.password = await bcrypt.hash(this.password, salt)
+
+    // Generate referral code if it doesn't exist
+    if (!this.referralCode) {
+        this.referralCode = Math.random().toString(36).substring(2, 8).toUpperCase()
+    }
 })
 
 const planSchema = new mongoose.Schema({
@@ -50,7 +63,11 @@ const orderSchema = new mongoose.Schema({
     message: { type: String },
     transactionId: { type: String },
     status: { type: String, default: 'pending', enum: ['pending', 'completed', 'canceled'] },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    // Referral System
+    referralCodeUsed: { type: String },
+    discountAmount: { type: Number, default: 0 },
+    referrerRewardPaid: { type: Boolean, default: false }
 }, { timestamps: true })
 
 const consultationSchema = new mongoose.Schema({
@@ -71,9 +88,29 @@ const demoSchema = new mongoose.Schema({
     isVisible: { type: Boolean, default: true }
 }, { timestamps: true })
 
+const referralSettingsSchema = new mongoose.Schema({
+    coinValue: { type: Number, default: 1 }, // 1 Coin = 1 Taka
+    discountPercentage: { type: Number, default: 5 }, // 5% discount for user
+    rewardCoins: { type: Number, default: 100 }, // 100 coins for sharer
+    signupBonus: { type: Number, default: 10 }, // 10 coins for the new user who signs up with a code
+}, { timestamps: true })
+
+const withdrawRequestSchema = new mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    coins: { type: Number, required: true },
+    amount: { type: Number, required: true },
+    paymentMethod: { type: String, required: true }, // e.g., Bkash, Nagad, Bank
+    accountNumber: { type: String, required: true },
+    status: { type: String, default: 'pending', enum: ['pending', 'approved', 'rejected'] },
+    adminNote: { type: String },
+}, { timestamps: true })
+
 export const User = mongoose.model("User", userSchema)
 export const Plan = mongoose.model("Plan", planSchema)
 export const Order = mongoose.model("Order", orderSchema)
 export const Consultation = mongoose.model("Consultation", consultationSchema)
 export const Demo = mongoose.model("Demo", demoSchema)
+export const ReferralSettings = mongoose.model("ReferralSettings", referralSettingsSchema)
+export const WithdrawRequest = mongoose.model("WithdrawRequest", withdrawRequestSchema)
 export { ChatSession } from "./Chat.js"
+

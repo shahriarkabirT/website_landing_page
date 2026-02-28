@@ -17,6 +17,8 @@ import consultationRoutes from "./routes/consultationRoutes.js"
 import demoRoutes from "./routes/demoRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
 import chatRoutes from "./routes/chatRoutes.js"
+import referralRoutes from "./routes/referralRoutes.js"
+import withdrawRoutes from "./routes/withdrawRoutes.js"
 import { setupChatSocket } from "./socket/chatHandler.js"
 import { globalLimiter, consultationLimiter, orderLimiter, sessionLimiter } from "./middleware/rateLimiter.js"
 import { User, Plan } from "./models/index.js"
@@ -111,6 +113,8 @@ app.use("/api/consultation", consultationLimiter, consultationRoutes) // Spam pr
 app.use("/api/demo", demoRoutes)
 app.use("/api/upload", uploadRoutes)
 app.use("/api/chat", chatRoutes)
+app.use("/api/referral", referralRoutes)
+app.use("/api/withdraw", withdrawRoutes)
 
 const __dirname = path.resolve()
 console.log("Serving static files from:", path.join(__dirname, "/uploads"))

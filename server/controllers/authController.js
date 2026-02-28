@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
-import { User } from "../models/index.js"
-import { sendMagicLinkEmail } from "../services/mailService.js"
+import { User, ReferralSettings } from "../models/index.js"
+import { sendMagicLinkEmail, sendOTPEmail, sendPasswordResetEmail } from "../services/mailService.js"
 
 // Constants
 const ACCESS_TOKEN_EXPIRE = "7d"
@@ -42,47 +42,156 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
     })
 }
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
+// @desc    Step 1: Send OTP for Registration
+// @route   POST /api/auth/register-otp
 // @access  Public
-export const registerUser = async (req, res) => {
+export const registerOTP = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password, referralCode } = req.body
 
-        const userExists = await User.findOne({ email })
+        let user = await User.findOne({ email })
 
-        if (userExists) {
-            return res.status(400).json({ message: "User already exists" })
+        if (user && user.isVerified) {
+            return res.status(400).json({ message: "User already exists and is verified" })
         }
 
-        const user = await User.create({
-            name,
-            email,
-            password,
-        })
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString()
+        const otpExpires = Date.now() + 10 * 60 * 1000 // 10 minutes
 
         if (user) {
-            const { accessToken, refreshToken } = generateTokens(user._id)
-
-            // Save refresh token to DB
-            user.refreshToken = refreshToken
-            await user.save()
-
-            setAuthCookies(res, accessToken, refreshToken)
-
-            res.status(201).json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                phone: user.phone,
-                avatar: user.avatar,
-            })
+            // Update unverified user
+            user.name = name
+            user.password = password
+            user.otp = otp
+            user.otpExpires = otpExpires
+            // Only update referral if it was not set previously (optional logic)
         } else {
-            res.status(400).json({ message: "Invalid user data" })
+            // Create unverified user
+            user = new User({
+                name,
+                email,
+                password,
+                otp,
+                otpExpires,
+                isVerified: false
+            })
+
+            if (referralCode) {
+                const referrer = await User.findOne({ referralCode: referralCode.toUpperCase() })
+                if (referrer) {
+                    user.referredBy = referrer._id
+                }
+            }
         }
+
+        await user.save()
+        await sendOTPEmail(email, otp)
+
+        res.status(200).json({ message: "OTP sent to your email" })
     } catch (error) {
         console.error(error)
+        res.status(500).json({ message: "Server error during registration OTP" })
+    }
+}
+
+// @desc    Step 2: Verify OTP and complete registration
+// @route   POST /api/auth/verify-otp
+// @access  Public
+export const verifyOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body
+
+        const user = await User.findOne({
+            email,
+            otp,
+            otpExpires: { $gt: Date.now() }
+        })
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired OTP" })
+        }
+
+        // Mark as verified
+        user.isVerified = true
+        user.otp = undefined
+        user.otpExpires = undefined
+
+        // Award signup bonus if referred
+        if (user.referredBy) {
+            const settings = await ReferralSettings.findOne() || { signupBonus: 10 }
+            user.coins = settings.signupBonus || 10
+        }
+
+        const { accessToken, refreshToken } = generateTokens(user._id)
+        user.refreshToken = refreshToken
+        await user.save()
+
+        setAuthCookies(res, accessToken, refreshToken)
+
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            phone: user.phone,
+            avatar: user.avatar,
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "Server error during OTP verification" })
+    }
+}
+
+// @desc    Forgot Password - Send OTP
+// @route   POST /api/auth/forgot-password
+// @access  Public
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+        const user = await User.findOne({ email })
+
+        if (!user) {
+            // For security, don't reveal user existence, but we want to know for iDokan
+            return res.status(404).json({ message: "User not found with this email" })
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString()
+        user.resetPasswordOTP = otp
+        user.resetPasswordExpires = Date.now() + 10 * 60 * 1000 // 10 minutes
+        await user.save()
+
+        await sendPasswordResetEmail(email, otp)
+        res.json({ message: "Password reset OTP sent to your email" })
+    } catch (error) {
+        res.status(500).json({ message: "Server error" })
+    }
+}
+
+// @desc    Reset Password
+// @route   POST /api/auth/reset-password
+// @access  Public
+export const resetPassword = async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body
+
+        const user = await User.findOne({
+            email,
+            resetPasswordOTP: otp,
+            resetPasswordExpires: { $gt: Date.now() }
+        })
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired reset OTP" })
+        }
+
+        user.password = newPassword
+        user.resetPasswordOTP = undefined
+        user.resetPasswordExpires = undefined
+        await user.save()
+
+        res.json({ message: "Password reset successful. You can now login." })
+    } catch (error) {
         res.status(500).json({ message: "Server error" })
     }
 }
