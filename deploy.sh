@@ -22,9 +22,6 @@ cd /var/www/website_landing_page/server
 echo "📥 Installing dependencies..."
 pnpm install
 
-echo "🔨 Building app..."
-pnpm run build
-
 echo "🔄 Restarting PM2..."
 pm2 restart idokan_server
 
