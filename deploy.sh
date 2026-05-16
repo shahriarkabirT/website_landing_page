@@ -30,9 +30,6 @@ pm2 restart idokan_server
 echo "Enter client folder"
 cd /var/www/website_landing_page/client 
 
-echo "📦 Pulling latest code..."
-git pull origin main
-
 echo "📥 Installing dependencies..."
 pnpm install
 
