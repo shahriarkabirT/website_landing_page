@@ -14,8 +14,10 @@ git pull origin main
 
 # server setup
 
+
+
 echo "Enter server folder"
-cd server
+cd /var/www/website_landing_page/server
 
 echo "📥 Installing dependencies..."
 pnpm install
@@ -29,7 +31,7 @@ pm2 restart idokan_server
 # client setup
 
 echo "Enter client folder"
-cd client
+cd /var/www/website_landing_page/client 
 
 echo "📦 Pulling latest code..."
 git pull origin main
