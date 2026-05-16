@@ -19,6 +19,6 @@ jobs:
           port: 22
           script: | 
             lxc exec Rifat -- bash -c "
-              cd /var/www/idokan_ecom &&
+              cd /var/www/website_landing_page &&
               ./deploy.sh
             "
