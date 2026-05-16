@@ -7,7 +7,7 @@ export PATH=$PATH:/root/.nvm/versions/node/v24.14.1/bin
 
 echo "🚀 Starting deployment..."
 
-cd /var/www/idokan_ecom
+cd /var/www/website_landing_page
 
 echo "📦 Pulling latest code..."
 git pull origin main
