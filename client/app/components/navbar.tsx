@@ -37,6 +37,33 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
 
+    useEffect(() => {
+        const scrollToHash = () => {
+            if (typeof window !== "undefined" && window.location.hash) {
+                let hash = window.location.hash.substring(1)
+                // Map aliases so both singular and plural work seamlessly
+                if (hash === "demo") hash = "demos"
+                if (hash === "package" || hash === "packages") hash = "pricing"
+
+                const element = document.getElementById(hash)
+                if (element) {
+                    element.scrollIntoView({ behavior: "smooth" })
+                }
+            }
+        }
+
+        scrollToHash()
+        const timer1 = setTimeout(scrollToHash, 300)
+        const timer2 = setTimeout(scrollToHash, 800)
+        const timer3 = setTimeout(scrollToHash, 1500)
+
+        return () => {
+            clearTimeout(timer1)
+            clearTimeout(timer2)
+            clearTimeout(timer3)
+        }
+    }, [pathname])
+
     const isActive = (path: string) => {
         if (path === "/") return pathname === "/" && activeSection === ""
         if (path.startsWith("/#")) return pathname === "/" && activeSection === path.substring(1)
