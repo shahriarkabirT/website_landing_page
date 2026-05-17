@@ -42,11 +42,13 @@ function useCarousel() {
   return context
 }
 
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
+
 function Carousel({
   orientation = 'horizontal',
   opts,
   setApi,
-  plugins,
+  plugins = [],
   className,
   children,
   ...props
@@ -56,7 +58,7 @@ function Carousel({
       ...opts,
       axis: orientation === 'horizontal' ? 'x' : 'y',
     },
-    plugins,
+    [WheelGesturesPlugin(), ...plugins],
   )
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
   const [canScrollNext, setCanScrollNext] = React.useState(false)

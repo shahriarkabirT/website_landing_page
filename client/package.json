@@ -46,6 +46,7 @@
     "date-fns": "4.1.0",
     "dotenv": "latest",
     "embla-carousel-react": "8.5.1",
+    "embla-carousel-wheel-gestures": "^8.1.0",
     "express": "latest",
     "framer-motion": "^12.33.0",
     "input-otp": "1.4.1",
