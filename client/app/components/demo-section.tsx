@@ -23,6 +23,7 @@ interface Demo {
     description: string;
     imageUrls: string[];
     link?: string;
+    order?: number;
 }
 
 export default function DemoSection() {
@@ -52,7 +53,10 @@ export default function DemoSection() {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demo?limit=6`);
                 if (res.ok) {
                     const result = await res.json();
-                    setDemos(result.demos || []);
+                    const sortedDemos = (result.demos || []).sort((a: Demo, b: Demo) => {
+                        return (a.order || 0) - (b.order || 0);
+                    });
+                    setDemos(sortedDemos);
                 }
             } catch (error) {
                 console.error("Failed to fetch demos:", error);
@@ -111,7 +115,7 @@ export default function DemoSection() {
                 <div className="relative">
                     <Carousel
                         opts={{
-                            align: "center",
+                            align: "start",
                             loop: true,
                         }}
                         setApi={setApi}

@@ -1,6 +1,6 @@
 import ContactForm from "./components/contact-form";
 import Hero from "./components/hero";
-import Templates from "./components/templates";
+// import Templates from "./components/templates";
 import Pricing from "./components/pricing";
 import Navbar from "./components/navbar";
 import DemoSection from "./components/demo-section";

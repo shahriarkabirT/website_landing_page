@@ -24,6 +24,7 @@ interface Demo {
     description: string;
     imageUrls: string[];
     link?: string;
+    order?: number;
 }
 
 interface PaginatedResponse {
