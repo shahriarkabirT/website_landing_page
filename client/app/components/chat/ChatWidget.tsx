@@ -8,6 +8,26 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 
+const playNotificationSound = () => {
+    try {
+        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.3);
+    } catch (e) {
+        console.error("Audio play failed", e);
+    }
+};
+
 export const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
@@ -16,7 +36,18 @@ export const ChatWidget = () => {
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<{ sender: string; content: string }[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [showGreeting, setShowGreeting] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const isOpenRef = useRef(isOpen);
+
+    useEffect(() => {
+        isOpenRef.current = isOpen;
+        if (isOpen) {
+            setUnreadCount(0);
+            setShowGreeting(false);
+        }
+    }, [isOpen]);
 
     // Restore session on mount if exists in local storage
     useEffect(() => {
@@ -39,7 +70,14 @@ export const ChatWidget = () => {
 
             socket.on("session_restored", (session) => {
                 setSessionId(session._id);
-                setMessages(session.messages || []);
+                let loadedMessages = session.messages || [];
+                if (loadedMessages.length === 0) {
+                    loadedMessages = [{
+                        sender: "admin",
+                        content: `Hi ${name}! Please leave your message. An agent will be with you shortly.`
+                    }];
+                }
+                setMessages(loadedMessages);
                 localStorage.setItem("chatSessionId", session._id);
                 localStorage.setItem("chatName", name);
                 localStorage.setItem("chatPhone", phone);
@@ -47,6 +85,10 @@ export const ChatWidget = () => {
 
             socket.on("new_message", ({ message }) => {
                 setMessages((prev) => [...prev, message]);
+                if (!isOpenRef.current || document.hidden) {
+                    setUnreadCount((prev) => prev + 1);
+                    playNotificationSound();
+                }
             });
 
             return () => {
@@ -68,6 +110,10 @@ export const ChatWidget = () => {
         e.preventDefault();
         if (name.trim() && phone.trim()) {
             setIsRegistered(true);
+            setMessages([{
+                sender: "admin",
+                content: `Hi ${name.trim()}! Please leave your message. An agent will be with you shortly.`
+            }]);
         }
     };
 
@@ -197,12 +243,51 @@ export const ChatWidget = () => {
                 )}
             </AnimatePresence>
 
+            {/* Tooltip Greeting */}
+            <AnimatePresence>
+                {!isOpen && showGreeting && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20, scale: 0.9 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 20, scale: 0.9 }}
+                        className="absolute bottom-16 right-0 mb-4 w-48 bg-white text-slate-800 p-3 rounded-xl shadow-lg border text-sm flex items-start gap-2"
+                    >
+                        <div className="flex-1">
+                            <p className="font-semibold text-slate-900 mb-0.5">Need help?</p>
+                            <p className="text-xs text-slate-500">We're here! Chat with us.</p>
+                        </div>
+                        <button 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowGreeting(false);
+                            }}
+                            className="text-slate-400 hover:text-slate-600 p-0.5 shrink-0"
+                        >
+                            <X size={14} />
+                        </button>
+                        <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-b border-r transform rotate-45"></div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="bg-blue-600 text-white hover:bg-blue-700 transition-colors h-14 w-14 rounded-full shadow-xl flex items-center justify-center overflow-hidden"
+                className="relative bg-blue-600 text-white hover:bg-blue-700 transition-colors h-14 w-14 rounded-full shadow-xl flex items-center justify-center overflow-visible"
             >
+                <AnimatePresence>
+                    {!isOpen && unreadCount > 0 && (
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-sm"
+                        >
+                            {unreadCount > 9 ? "9+" : unreadCount}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <AnimatePresence mode="wait">
                     {isOpen ? (
                         <motion.div
